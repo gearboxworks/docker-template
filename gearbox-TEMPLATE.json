@@ -16,6 +16,7 @@
 	"args": "",
 	"env": "ADMINER_VERSION",
 	"ref": "adminer:4.7.6",
+	"refurl": "https://www.adminer.org/",
 	"base": "gearboxworks/gearbox-base:alpine-3.9"
 }
 
