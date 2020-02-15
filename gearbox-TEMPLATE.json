@@ -1,0 +1,21 @@
+{
+	"state": "production",
+	"organization": "gearboxworks",
+	"name": "adminer",
+	"maintainer": "Gearbox Team <team@gearbox.works>",
+	"version": "4.7.6",
+	"majorversion": "4.7",
+	"latest": "",
+	"class": "admin",
+	"network": "--network gearboxnet",
+	"ports": [
+		"8081"
+	],
+	"volumes": "",
+	"restart": "--restart no",
+	"args": "",
+	"env": "ADMINER_VERSION",
+	"ref": "adminer:4.7.6",
+	"base": "gearboxworks/gearbox-base:alpine-3.9"
+}
+

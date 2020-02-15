@@ -1,0 +1,94 @@
+################################################################################
+# {{ .CreationWarning }}
+# {{ $.CreationInfo }}
+{{ if not .Json.version }}
+# No version
+
+{{ else if not .Json.base }}
+# No base
+
+{{ else if not .Json.name }}
+# No name
+
+{{ else if not .Json.ref }}
+# Plain Docker container for docker-{{ .Json.name }} based off {{ .Json.base }}
+ARG VERSION={{ .Json.version }}
+
+# 1. First reference the gearbox-base image.
+FROM {{ .Json.base }}
+ARG VERSION
+
+# 2. Set up env variables.
+MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
+ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.name }}"
+ENV GEARBOX_CONTAINER_VERSION ${VERSION}
+LABEL gearbox.json='{{ .JsonString }}'
+{{ range .Json }}
+LABEL container.{{ . }}="{{ .organization }}"
+{{ end }}
+
+# 3. Now copy the local files specific to this container.
+COPY build /build
+COPY ${VERSION}/build /build
+COPY ${VERSION}/gearbox.json /build/gearbox.json
+
+# 4. Run the build-base.sh script to set everything up.
+RUN /bin/sh /build/build-base.sh
+
+# 5. Run the build-{{ .Json.name }}.sh script to set everything up.
+RUN /bin/sh /build/build-{{ .Json.name }}.sh
+
+# 6. Expose ports.
+EXPOSE 22 9970 {{ range .Json.ports }}{{ . }} {{ end }}
+WORKDIR /home/gearbox/projects
+{{ else }}
+# Referenced Docker container for docker-{{ .Json.name }} based off {{ .Json.base }} with {{ .Json.ref }} overlayed.
+ARG VERSION={{ with .Json.version }}{{ . }}{{ end }}
+
+# 1. First reference the gearbox-base image.
+FROM {{ .Json.base }} as gearbox-base
+
+# 2. Next reference the third party image.
+FROM {{ .Json.ref }}
+ARG VERSION
+USER root
+
+# 3. Copy the build directory over from gearbox-base image.
+COPY --from=gearbox-base /build /build
+
+# 4. Set up env variables.
+MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
+ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.name }}"
+ENV GEARBOX_CONTAINER_VERSION ${VERSION}
+LABEL gearbox.json='{{ .JsonString }}'
+LABEL container.organization="{{ .Json.organization }}"
+LABEL container.name="{{ .Json.name }}"
+LABEL container.version="{{ .Json.version }}"
+LABEL container.majorversion="{{ .Json.majorversion }}"
+LABEL container.latest="{{ .Json.latest }}"
+LABEL container.class="{{ .Json.class }}"
+LABEL container.network="{{ .Json.network }}"
+LABEL container.ports="{{ .Json.ports }}"
+LABEL container.volumes="{{ .Json.volumes }}"
+LABEL container.restart="{{ .Json.restart }}"
+LABEL container.args="{{ .Json.args }}"
+LABEL container.env="{{ .Json.env }}"
+
+# 5. Now copy the local files specific to this container.
+COPY build /build
+COPY ${VERSION}/build /build
+COPY ${VERSION}/gearbox.json /build/gearbox.json
+
+# 6. Run the build-base.sh script to set everything up.
+RUN /bin/sh /build/build-base.sh
+
+# 7. Run the build-{{ .Json.name }}.sh script to set everything up.
+RUN /bin/sh /build/build-{{ .Json.name }}.sh
+
+# 8. Expose ports.
+EXPOSE 22 9970 {{ range .Json.ports }}{{ . }} {{ end }}
+WORKDIR /home/gearbox/projects
+{{ with .Json.inner }}{{ . }}{{ end }}
+CMD ["/init"]
+{{ end }}
+# END
