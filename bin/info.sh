@@ -29,8 +29,8 @@ do
 	docker image ls ${GB_IMAGEVERSION}
 
 	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
+	docker container ls -f name="^${GB_CONTAINERMAJORVERSION}"
 	echo "# Gearbox[${GB_CONTAINERVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERVERSION}"
+	docker container ls -f name="^${GB_CONTAINERVERSION}"
 done
 

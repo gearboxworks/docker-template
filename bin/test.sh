@@ -26,17 +26,28 @@ do
 	STATE="$(${DIR}/_CheckContainer.sh ${GB_CONTAINERVERSION})"
 	case ${STATE} in
 		'STARTED')
-			echo "# Gearbox[${GB_IMAGEVERSION}]: Container already exists and is started."
 			;;
 		'STOPPED')
-			echo "# Gearbox[${GB_IMAGEVERSION}]: Container already exists and is stopped."
+			${DIR}/start.sh ${GB_VERSION}
 			;;
 		'MISSING')
-			echo "# Gearbox[${GB_IMAGEVERSION}]: Creating container."
-			docker create --name ${GB_CONTAINERVERSION} ${GB_NETWORK} -P ${GB_ARGS} ${GB_VOLUMES} ${GB_IMAGEVERSION}
+			${DIR}/create.sh ${GB_VERSION}
+			${DIR}/start.sh ${GB_VERSION}
 			;;
 		*)
-			echo "# Gearbox[${GB_IMAGEVERSION}]: Unknown state."
+			echo "# Gearbox[${GB_CONTAINERVERSION}]: Unknown state."
+			;;
+	esac
+
+	STATE="$(${DIR}/_CheckContainer.sh ${GB_CONTAINERVERSION})"
+	case ${STATE} in
+		'STARTED')
+			echo "# Gearbox[${GB_CONTAINERVERSION}]: Running unit-tests."
+			PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
+			ssh -p ${PORT} gearbox@localhost /etc/gearbox/unit-tests/run.sh
+			;;
+		*)
+			echo "# Gearbox[${GB_CONTAINERVERSION}]: Unknown state."
 			;;
 	esac
 done

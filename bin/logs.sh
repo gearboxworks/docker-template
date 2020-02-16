@@ -23,14 +23,12 @@ do
 	${DIR}/_GetEnv.sh "${JSONFILE}"
 	. "${VERSION}/.env"
 
-	echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: List image."
-	docker image ls ${GB_IMAGEMAJORVERSION}
-	echo "# Gearbox[${GB_IMAGEVERSION}]: List image."
-	docker image ls ${GB_IMAGEVERSION}
-
-	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
-	echo "# Gearbox[${GB_CONTAINERVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERVERSION}"
+	if [ -f "${VERSION}/logs/${GB_NAME}.log" ]
+	then
+		echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Showing logs."
+		script -dp "${VERSION}/logs/${GB_NAME}.log" | less -SinR
+	else
+		echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: No logs."
+	fi
 done
 

@@ -23,14 +23,14 @@ do
 	${DIR}/_GetEnv.sh "${JSONFILE}"
 	. "${VERSION}/.env"
 
-	echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: List image."
-	docker image ls ${GB_IMAGEMAJORVERSION}
-	echo "# Gearbox[${GB_IMAGEVERSION}]: List image."
-	docker image ls ${GB_IMAGEVERSION}
+	echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Inspect image."
+	docker image inspect ${GB_IMAGEMAJORVERSION} 2>&1
+	echo "# Gearbox[${GB_IMAGEVERSION}]: Inspect image."
+	docker image inspect ${GB_IMAGEVERSION} 2>&1
 
-	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
-	echo "# Gearbox[${GB_CONTAINERVERSION}]: List container."
-	docker container ls -a -f name="^${GB_CONTAINERVERSION}"
+	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: Inspect container."
+	docker container inspect name="^${GB_CONTAINERMAJORVERSION}" 2>&1
+	echo "# Gearbox[${GB_CONTAINERVERSION}]: Inspect container."
+	docker container inspect name="^${GB_CONTAINERVERSION}" 2>&1
 done
 

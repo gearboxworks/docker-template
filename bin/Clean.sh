@@ -2,12 +2,14 @@
 
 DIR="$(dirname $0)"
 
-if [ "$1" == "" ]
+echo "################################################################################"
+. ${DIR}/_GetVersions.sh
+if [ "${VERSIONS}" == "" ]
 then
-	VERSIONS="$(find * -maxdepth 1 -type d -name '*\.*' ! -name .git)"
-else
-	VERSIONS="$@"
+	echo "# Gearbox: Running ${0} failed"
+	exit 1
 fi
+echo "# Gearbox: Running ${0} for versions: ${VERSIONS}"
 
 for VERSION in "${VERSIONS}"
 do
@@ -18,7 +20,7 @@ do
 		exit
 	fi
 
-	${DIR}/GetEnv.sh "${JSONFILE}"
+	${DIR}/_GetEnv.sh "${JSONFILE}"
 	. "${VERSION}/.env"
 
 	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: Removing container."
@@ -32,5 +34,8 @@ do
 
 	echo "# Gearbox[${GB_IMAGEVERSION}]: Removing image."
 	docker image rm -f ${GB_IMAGEVERSION}
+
+	echo "# Gearbox[${GB_IMAGEVERSION}]: Removing logs."
+	rm "${GB_VERSION}/logs/*.log"
 done
 
