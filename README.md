@@ -62,7 +62,7 @@ Check out the gearbox-TEMPLATE.json file for an example.
 
 - 8 Push build.
 
-`make push-4.7.6` - Test a specific version.
+`make push-4.7.6` - Push  specific version to GitHub and DockerHub.
 
-`make push-all` - Test all versions.
+`make push-all` - Push all versions to GitHub and DockerHub.
 
