@@ -5,6 +5,9 @@
 # Template Docker Container for Gearbox
 This is the main template repository for creating Docker containers within Gearbox.
 
+Use it to create a Gearbox container from scratch or wrap an already existing container to be used within Gearbox.
+
+
 ## Using this template container.
 
 - 1 Fetch this repo.
@@ -62,7 +65,7 @@ Check out the gearbox-TEMPLATE.json file for an example.
 
 - 8 Push build.
 
-`make push-4.7.6` - Push  specific version to GitHub and DockerHub.
+`make push-4.7.6` - Push specific version to GitHub and DockerHub.
 
 `make push-all` - Push all versions to GitHub and DockerHub.
 
