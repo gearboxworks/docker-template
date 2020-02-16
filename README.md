@@ -17,27 +17,52 @@ This is the main template repository for creating Docker containers within Gearb
 
 Check out the gearbox-TEMPLATE.json file for an example.
 
-- 3 Build template files.
+- 3 Initialize repo based off JSON file.
 
-`bin/Create.sh gearbox-TEMPLATE.json`
+`make init`
 
 - 4 Update scripts, directories and any other files under rootfs.
 
+	- 4.7.6/DockerfileRuntime
+	- 4.7.6/gearbox.json
+	- 4.7.6/logs
+	- 4.7.6/logs/.keep
+	- build/build-adminer.apks
+	- build/build-adminer.env
+	- build/build-adminer.sh
+	- build/gearbox-adminer.json
+	- build/rootfs
+	- build/rootfs/etc
+	- build/rootfs/etc/gearbox
+	- build/rootfs/etc/gearbox/services
+	- build/rootfs/etc/gearbox/services/adminer
+	- build/rootfs/etc/gearbox/services/adminer/finish
+	- build/rootfs/etc/gearbox/services/adminer/run
+	- build/rootfs/etc/gearbox/unit-tests
+	- build/rootfs/etc/gearbox/unit-tests/adminer
+	- build/rootfs/etc/gearbox/unit-tests/adminer/01-base.sh
+
 - 5 Create docker image.
 
-`bin/Build.sh 4.7.6` - Build a specific version.
+`make build-4.7.6` - Build a specific version.
 
-`bin/Build.sh` - Build all versions.
+`make build-all` - Build all versions.
 
 - 6 Test build.
 
-`bin/Test.sh 4.7.6` - Test a specific version.
+`make test-4.7.6` - Test a specific version.
 
-`bin/Test.sh` - Test all versions.
+`make test-all` - Test all versions.
 
-- 7 Push build.
+- 7 Maybe run a shell.
 
-`bin/Push.sh 4.7.6` - Test a specific version.
+`make shell-4.7.6` - Shell into a specific version.
 
-`bin/Push.sh` - Test all versions.
+`make shell-all` - Shell into all versions.
+
+- 8 Push build.
+
+`make push-4.7.6` - Test a specific version.
+
+`make push-all` - Test all versions.
 
