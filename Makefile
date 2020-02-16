@@ -53,7 +53,7 @@ VERSIONS := $(subst /,, $(sort $(filter-out ./, $(dir $(wildcard *.*/) ) ) ) )
 endif
 
 
-.PHONY: build push release clean list logs inspect test create shell run start stop rm
+.PHONY: init build push release clean list logs inspect test create shell run start stop rm
 
 ################################################################################
 # Image related commands.
@@ -64,6 +64,8 @@ all:
 
 help:
 	@echo "################################################################################"
+	@echo "init				- Initialize repository from TEMPLATE."
+	@echo ""
 	@echo "clean-[all | <VERSION>]		- Clean runtime container image."
 	@echo "build-[all | <VERSION>]		- Generate runtime container image."
 	@echo "test-[all | <VERSION>]		- Execute container unit tests."
@@ -81,13 +83,22 @@ help:
 
 
 ################################################################################
-%-all:
-	@./bin/$*.sh all
+#%-all:
+#	@./bin/$*.sh all
 
 
 ################################################################################
 readme:
 	@cat README.md
+
+
+################################################################################
+init: *.json
+
+.FORCE:
+%.json: .FORCE
+	@echo "Gearbox: Initialize repository."
+	@./bin/CreateRepo.sh "$@"
 
 
 ################################################################################
