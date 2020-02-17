@@ -1,20 +1,21 @@
 {
 	"state": "production",
 	"organization": "gearboxworks",
-	"name": "adminer",
+	"name": "mything",
 	"maintainer": "Gearbox Team <team@gearbox.works>",
-	"version": "4.7.6",
-	"majorversion": "4.7",
-	"latest": "",
+	"version": "4.2.0",
+	"majorversion": "4.2",
+	"latest": "1",
 	"class": "admin",
 	"network": "--network gearboxnet",
 	"ports": [
-		"8081"
+		"80",
+		"42"
 	],
 	"volumes": "",
 	"restart": "--restart no",
 	"args": "",
-	"env": "ADMINER_VERSION",
+	"env": "MYTHING_VERSION",
 	"ref": "adminer:4.7.6",
 	"refurl": "https://www.adminer.org/",
 	"base": "gearboxworks/gearbox-base:alpine-3.9"
