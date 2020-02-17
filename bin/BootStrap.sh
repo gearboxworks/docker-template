@@ -1,12 +1,11 @@
 #!/bin/bash
 
-DIR="$(dirname $0)"
 GB_GITREPO="$1"; export GB_GITREPO
 GB_JSON="$2"
 
 ################################################################################
 GB_GITURL="$(git config --get remote.origin.url)"; export GB_GITURL
-if [ "${GB_GITURL}" == "" ]
+if [ "${GB_GITURL}" != "" ]
 then
 	GB_GITREPO="$(basename -s .git ${GB_GITURL})"
 fi
