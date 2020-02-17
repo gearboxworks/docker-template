@@ -164,7 +164,7 @@ Alternatively, you can specifying a version different to "latest".
 
 * * *
 
-## Updating this template container.
+### Updating this template container.
 
 *NOTE: For gearboxworks staff only...*
 
