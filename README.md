@@ -16,6 +16,8 @@ Use it to create a Gearbox container from scratch or wrap an already existing co
 
 `cd docker-template`
 
+`rm -rf .git`
+
 
 ### 2 Create JSON file.
 

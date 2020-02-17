@@ -23,11 +23,7 @@ do
 	${DIR}/_GetEnv.sh "${JSONFILE}"
 	. "${VERSION}/.env"
 
-	echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: Removing container."
-	docker container rm -f ${GB_CONTAINERMAJORVERSION}
-
-	echo "# Gearbox[${GB_CONTAINERVERSION}]: Removing container."
-	docker container rm -f ${GB_CONTAINERVERSION}
+	${DIR}/rm.sh "${VERSION}"
 
 	echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Removing image."
 	docker image rm -f ${GB_IMAGEMAJORVERSION}
