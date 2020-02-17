@@ -3,7 +3,7 @@
 # WARNING: This file is SOURCED. Don't add in any "exit", otherwise your shell will exit.
 
 getall() {
-	VERSIONS="$(find * -maxdepth 1 -type f -name 'gearbox.json' | sed 's/\/gearbox.json//')"
+	VERSIONS="$(find * -maxdepth 1 -type f -name 'gearbox.json' | sed 's/\/gearbox.json//' | sort -rn)"
 	VERSIONS="$(echo ${VERSIONS})"
 	# Easily remove CR
 }
