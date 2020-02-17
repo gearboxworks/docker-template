@@ -76,3 +76,20 @@ At this point you can remove the `TEMPLATE` directory and src JSON file. Or leav
 
 `make push-all` - Push all versions to GitHub and DockerHub.
 
+
+## Updating this template container.
+
+*NOTE: For gearboxworks staff only...*
+
+```
+TemplateRelease.sh
+    Updates the docker-template GitHub repository with either a new or updated release.
+
+TemplateRelease.sh create [version] - Creates a new release on GitHub.
+TemplateRelease.sh update [version] - Updates an existing release on GitHub.
+
+if [version] isn't specified, then...
+- Prompt the user for a new version.
+- Do nothing.
+```
+
