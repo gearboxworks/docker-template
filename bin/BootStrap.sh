@@ -48,7 +48,7 @@ rm -rf "${GB_GITREPO}/.git"
 if [ "${GB_JSON}" != "" ]
 then
 	echo "# Gearbox[bootstrap]: JSON file provided. Running 'make init' for you."
-	cp "${GB_JSON}" "${GB_GITREPO}/gearbox-TEMPLATE.json"
+	cp "${GB_JSON}" "${GB_GITREPO}/gearbox.json"
 	cd "${GB_GITREPO}"
 	make init
 	echo "# Gearbox[bootstrap]: Completed OK."
