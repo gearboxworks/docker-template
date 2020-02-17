@@ -8,6 +8,8 @@ This is the main template repository for creating Docker containers within Gearb
 Use it to create a Gearbox container from scratch or wrap an already existing container to be used within Gearbox.
 
 
+* * *
+
 ## Simple setup, (using BootStrap.sh).
 
 ### 1 Fetch this repo.
@@ -24,6 +26,8 @@ Or download [from here](https://github.com/gearboxworks/docker-template/raw/mast
 
 `bash ./BootStrap.sh my-container MyContainer.json` - Specify a directory and JSON file - this will run the final `make init` for you.
 
+
+* * *
 
 ## Setup via GitHub.
 
@@ -68,6 +72,8 @@ At this point you can remove the `TEMPLATE` directory and src JSON file. Or leav
 	- build/rootfs/etc/gearbox/unit-tests/adminer
 	- build/rootfs/etc/gearbox/unit-tests/adminer/01-base.sh
 
+
+* * *
 
 ## Using the docker-template tools.
 
@@ -134,6 +140,29 @@ This will perform the following actions:
 
 If any step fails in the sequence, the process will be terminated.
 
+
+* * *
+
+## Additional docker-template tools.
+
+### Adding a new version.
+To add a new version of a docker image.
+- Create a JSON file - Either a new one, or copying an older version and editing with updated version details.
+- `./bin/CreateVersion.sh my-new-version.json` - CreateVersion.sh will populate the version directory.
+
+### Updating docker-template.
+New releases of the docker-template repository can be pulled using:
+
+`./bin/TemplateUpdate.sh`
+
+This will pull the latest release and update the TEMPLATE, bin and Makefile directories.
+
+Alternatively, you can specifying a version different to "latest".
+
+`./bin/TemplateUpdate.sh 1.0.1`
+
+
+* * *
 
 ## Updating this template container.
 
