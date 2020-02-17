@@ -4,6 +4,23 @@ DIR="$(dirname $0)"
 CMD="$1"
 VERSION="$2"
 
+
+help() {
+cat<<EOF
+
+$(basename $0)
+	Updates the docker-template GitHub repository with either a new or updated release.
+
+$(basename $0) create [version] - Creates a new release on GitHub.
+$(basename $0) update [version] - Updates an existing release on GitHub.
+
+if [version] isn't specified, then...
+- Prompt the user for a new version.
+- Do nothing.
+EOF
+}
+
+
 ################################################################################
 GB_GITURL="$(git config --get remote.origin.url)"; export GB_GITURL
 GB_GITREPO="$(basename -s .git ${GB_GITURL})"; export GB_GITREPO
@@ -22,6 +39,7 @@ fi
 if [ "${CMD}" == "" ]
 then
 	echo "# Gearbox[${GB_GITREPO}]: Doing nothing."
+	help
 	exit 1
 fi
 
