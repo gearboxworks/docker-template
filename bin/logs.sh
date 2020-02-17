@@ -11,7 +11,7 @@ then
 fi
 echo "# Gearbox: Running ${0} for versions: ${VERSIONS}"
 
-for VERSION in "${VERSIONS}"
+for VERSION in ${VERSIONS}
 do
 	JSONFILE="${VERSION}/gearbox.json"
 	if [ ! -f "${JSONFILE}" ]

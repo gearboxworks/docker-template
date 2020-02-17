@@ -21,7 +21,7 @@ case $(uname -s) in
 esac
 
 
-for VERSION in "${VERSIONS}"
+for VERSION in ${VERSIONS}
 do
 	JSONFILE="${VERSION}/gearbox.json"
 	if [ ! -f "${JSONFILE}" ]
