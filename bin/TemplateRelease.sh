@@ -23,7 +23,12 @@ EOF
 
 ################################################################################
 GB_GITURL="$(git config --get remote.origin.url)"; export GB_GITURL
-GB_GITREPO="$(basename -s .git ${GB_GITURL})"; export GB_GITREPO
+if [ "${GB_GITURL}" == "" ]
+then
+	GB_GITREPO=""; export GB_GITREPO
+else
+	GB_GITREPO="$(basename -s .git ${GB_GITURL})"; export GB_GITREPO
+fi
 
 if [ "${GB_GITREPO}" != "docker-template" ]
 then
