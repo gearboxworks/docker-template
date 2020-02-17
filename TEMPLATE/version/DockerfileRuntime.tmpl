@@ -17,14 +17,19 @@ ARG VERSION={{ .Json.version }}
 # 1. First reference the gearbox-base image.
 FROM {{ .Json.base }}
 ARG VERSION
+ARG GEARBOX_ENTRYPOINT
 
 # 2. Set up env variables.
 MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
 ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.name }}"
 ENV GEARBOX_CONTAINER_VERSION ${VERSION}
+ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 LABEL gearbox.json='{{ .JsonString }}'
-{{ range .Json }}
-LABEL container.{{ . }}="{{ .organization }}"
+{{ range $k, $v := .Json }}LABEL container.{{ $k }}="{{ $v }}"
+{{ end }}
+{{ range $k, $v := .Json }}{{ if ne $k "env" }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
+{{ end }}
+{{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
 
 # 3. Now copy the local files specific to this container.
@@ -51,6 +56,7 @@ FROM {{ .Json.base }} as gearbox-base
 # 2. Next reference the third party image.
 FROM {{ .Json.ref }}
 ARG VERSION
+ARG GEARBOX_ENTRYPOINT
 USER root
 
 # 3. Copy the build directory over from gearbox-base image.
@@ -60,19 +66,14 @@ COPY --from=gearbox-base /build /build
 MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
 ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.name }}"
 ENV GEARBOX_CONTAINER_VERSION ${VERSION}
+ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 LABEL gearbox.json='{{ .JsonString }}'
-LABEL container.organization="{{ .Json.organization }}"
-LABEL container.name="{{ .Json.name }}"
-LABEL container.version="{{ .Json.version }}"
-LABEL container.majorversion="{{ .Json.majorversion }}"
-LABEL container.latest="{{ .Json.latest }}"
-LABEL container.class="{{ .Json.class }}"
-LABEL container.network="{{ .Json.network }}"
-LABEL container.ports="{{ .Json.ports }}"
-LABEL container.volumes="{{ .Json.volumes }}"
-LABEL container.restart="{{ .Json.restart }}"
-LABEL container.args="{{ .Json.args }}"
-LABEL container.env="{{ .Json.env }}"
+{{ range $k, $v := .Json }}LABEL container.{{ $k }}="{{ $v }}"
+{{ end }}
+{{ range $k, $v := .Json }}{{ if eq $k "env" }}# {{ end }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
+{{ end }}
+{{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
+{{ end }}
 
 # 5. Now copy the local files specific to this container.
 COPY build /build

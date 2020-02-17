@@ -33,7 +33,7 @@ do
 			;;
 		'MISSING')
 			echo "# Gearbox[${GB_IMAGEVERSION}]: Creating container."
-			docker create --name ${GB_CONTAINERVERSION} ${GB_NETWORK} -P ${GB_ARGS} ${GB_VOLUMES} ${GB_IMAGEVERSION}
+			docker create --name ${GB_CONTAINERVERSION} ${GB_NETWORK} -P ${GB_VOLUMES} ${GB_IMAGEVERSION}
 			;;
 		*)
 			echo "# Gearbox[${GB_IMAGEVERSION}]: Unknown state."

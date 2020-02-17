@@ -1,23 +1,27 @@
 {
 	"state": "production",
 	"organization": "gearboxworks",
-	"name": "mything",
+	"name": "postgresql",
 	"maintainer": "Gearbox Team <team@gearbox.works>",
-	"version": "4.2.0",
-	"majorversion": "4.2",
+	"version": "12.2",
+	"majorversion": "",
 	"latest": "1",
-	"class": "admin",
+	"class": "dbserver",
 	"network": "--network gearboxnet",
 	"ports": [
-		"80",
-		"42"
+		"8080",
+		"5432"
 	],
 	"volumes": "",
 	"restart": "--restart no",
-	"args": "",
-	"env": "MYTHING_VERSION",
-	"ref": "adminer:4.7.6",
-	"refurl": "https://www.adminer.org/",
-	"base": "gearboxworks/gearbox-base:alpine-3.9"
+	"args": "-d postgres",
+	"env": {
+		"POSTGRES_USER": "gearbox",
+		"POSTGRES_PASSWORD": "password",
+		"PGDATA": "/var/lib/postgresql/data"
+	},
+	"ref": "postgres:12.2-alpine",
+	"refurl": "https://www.postgresql.org/",
+	"base": "gearboxworks/gearbox-base:alpine-3.11"
 }
 

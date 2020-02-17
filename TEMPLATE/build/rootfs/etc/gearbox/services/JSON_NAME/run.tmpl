@@ -6,5 +6,13 @@
 . /build/include-me.sh
 
 c_ok "Gearbox[{{ .Json.name }}]: Starting."
-# Add in daemon process here.
+
+GBEP="$(which ${GEARBOX_ENTRYPOINT})"
+if [ "${GBEP}" != "" ]
+then
+	${GBEP} ${GEARBOX_ARGS}
+else
+	# Add your service entry here, if no entrypoint defined in the ref container.
+	echo ""
+fi
 
