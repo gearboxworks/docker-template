@@ -12,22 +12,17 @@ Use it to create a Gearbox container from scratch or wrap an already existing co
 
 ### 1 Fetch this repo.
 Open a terminal window and fetch using wget.
+
 `wget https://github.com/gearboxworks/docker-template/raw/master/bin/BootStrap.sh`
 
 Or download [from here](https://github.com/gearboxworks/docker-template/raw/master/bin/BootStrap.sh)
 
 ### 2 Run BootStrap.sh script.
-`bash ./BootStrap.sh`
+`bash ./BootStrap.sh` - Let the script prompt you:
 
-Let the script prompt you:
+`bash ./BootStrap.sh my-container` - Specify a directory. You will have to create your JSON file and run `make init` afterwards.
 
-`bash ./BootStrap.sh my-container`
-
-Specify directory - you will have to create your JSON file and run `make init` afterwards.
-
-`bash ./BootStrap.sh my-container MyContainer.json`
-
-Specify directory and JSON file - this will run the final `make init` for you.
+`bash ./BootStrap.sh my-container MyContainer.json` - Specify a directory and JSON file - this will run the final `make init` for you.
 
 
 ## Setup via GitHub.
