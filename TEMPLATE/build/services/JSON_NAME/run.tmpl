@@ -2,10 +2,7 @@
 # {{ .CreationWarning }}
 # {{ .CreationInfo }}
 
-# See gearboxworks/gearbox-base for details.
-. /build/include-me.sh
-
-c_ok "Gearbox[{{ .Json.name }}]: Starting."
+c_ok "Starting."
 
 GBEP="$(which ${GEARBOX_ENTRYPOINT})"
 if [ "${GBEP}" != "" ]

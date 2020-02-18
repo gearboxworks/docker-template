@@ -37,7 +37,11 @@ do
 	# LOGFILE="${LOGDIR}/$(date +'%Y%m%d-%H%M%S').log"
 	LOGFILE="${LOGDIR}/${GB_NAME}.log"
 
-	if [ "${GB_REF}" != "" ]
+	if [ "${GB_REF}" == "base" ]
+	then
+		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: This is a base container."
+
+	elif [ "${GB_REF}" != "" ]
 	then
 		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Query ref container."
 		GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"

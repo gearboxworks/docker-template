@@ -1,17 +1,21 @@
-################################################################################
-# {{ .CreationWarning }}
-# {{ $.CreationInfo }}
 {{ if not .Json.version }}
+################################################################################
 # No version
 
 {{ else if not .Json.base }}
+################################################################################
 # No base
 
 {{ else if not .Json.name }}
+################################################################################
 # No name
 
 {{ else if not .Json.ref }}
+################################################################################
+# {{ .CreationWarning }}
+# {{ $.CreationInfo }}
 # Plain Docker container for docker-{{ .Json.name }} based off {{ .Json.base }}
+
 ARG VERSION={{ .Json.version }}
 
 # 1. First reference the gearbox-base image.
@@ -33,21 +37,72 @@ LABEL gearbox.json='{{ .JsonString }}'
 {{ end }}
 
 # 3. Now copy the local files specific to this container.
-COPY build /build
-COPY ${VERSION}/build /build
-COPY ${VERSION}/gearbox.json /build/gearbox.json
+COPY build /etc/gearbox
+COPY ${VERSION}/build /etc/gearbox
+COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
 
-# 4. Run the build-base.sh script to set everything up.
-RUN /bin/sh /build/build-base.sh
+# 4. Run the base.sh script to set everything up.
+RUN /bin/sh /etc/gearbox/build/base.sh
 
-# 5. Run the build-{{ .Json.name }}.sh script to set everything up.
-RUN /bin/sh /build/build-{{ .Json.name }}.sh
+# 5. Run the {{ .Json.name }}.sh script to set everything up.
+RUN /bin/sh /etc/gearbox/build/{{ .Json.name }}.sh
 
 # 6. Expose ports.
 EXPOSE 22 9970 {{ range .Json.ports }}{{ . }} {{ end }}
 WORKDIR /home/gearbox/projects
+
+# END
+################################################################################
+
+{{ else if eq .Json.ref "base" }}
+################################################################################
+# {{ .CreationWarning }}
+# {{ $.CreationInfo }}
+# Base Reference Docker container for docker-{{ .Json.name }} based off {{ .Json.base }}
+
+ARG VERSION={{ .Json.version }}
+
+# 1. First reference the gearbox-base image.
+FROM {{ .Json.base }}
+ARG VERSION
+# ARG GEARBOX_ENTRYPOINT
+
+# 2. Set up env variables.
+MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
+ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.name }}"
+ENV GEARBOX_CONTAINER_VERSION ${VERSION}
+# ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
+LABEL gearbox.json='{{ .JsonString }}'
+{{ range $k, $v := .Json }}{{ if ne $k "env" }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
+{{ end }}
+{{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
+{{ end }}
+
+# 3. Now copy the local files specific to this container.
+COPY build /etc/gearbox
+COPY ${VERSION}/build /etc/gearbox
+COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
+
+# 4. Run the base.sh script to set everything up.
+RUN /bin/sh /etc/gearbox/build/base.sh
+
+# 6. Expose ports.
+EXPOSE {{ range .Json.ports }}{{ . }} {{ end }}
+WORKDIR /home/gearbox/projects
+USER root
+
+# 7. Run S6 init.
+CMD ["/init"]
+
+# END
+################################################################################
+
 {{ else }}
+################################################################################
+# {{ .CreationWarning }}
+# {{ $.CreationInfo }}
 # Referenced Docker container for docker-{{ .Json.name }} based off {{ .Json.base }} with {{ .Json.ref }} overlayed.
+
 ARG VERSION={{ with .Json.version }}{{ . }}{{ end }}
 
 # 1. First reference the gearbox-base image.
@@ -60,7 +115,7 @@ ARG GEARBOX_ENTRYPOINT
 USER root
 
 # 3. Copy the build directory over from gearbox-base image.
-COPY --from=gearbox-base /build /build
+COPY --from=gearbox-base /build /etc/gearbox
 
 # 4. Set up env variables.
 MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
@@ -76,20 +131,23 @@ LABEL gearbox.json='{{ .JsonString }}'
 {{ end }}
 
 # 5. Now copy the local files specific to this container.
-COPY build /build
-COPY ${VERSION}/build /build
-COPY ${VERSION}/gearbox.json /build/gearbox.json
+COPY build /etc/gearbox
+COPY ${VERSION}/build /etc/gearbox
+COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
 
-# 6. Run the build-base.sh script to set everything up.
-RUN /bin/sh /build/build-base.sh
+# 6. Run the base.sh script to set everything up.
+RUN /bin/sh /etc/gearbox/build/base.sh
 
-# 7. Run the build-{{ .Json.name }}.sh script to set everything up.
-RUN /bin/sh /build/build-{{ .Json.name }}.sh
+# 7. Run the {{ .Json.name }}.sh script to set everything up.
+RUN /bin/sh /etc/gearbox/build/{{ .Json.name }}.sh
 
 # 8. Expose ports.
 EXPOSE 22 9970 {{ range .Json.ports }}{{ . }} {{ end }}
 WORKDIR /home/gearbox/projects
 {{ with .Json.inner }}{{ . }}{{ end }}
 CMD ["/init"]
-{{ end }}
+
 # END
+################################################################################
+
+{{ end }}

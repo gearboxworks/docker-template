@@ -2,11 +2,8 @@
 # {{ .CreationWarning }}
 # {{ .CreationInfo }}
 
-# See gearboxworks/gearbox-base for details.
-. /build/include-me.sh
-
 # Required to avoid services starting too quickly.
 sleep 5
 
-c_ok "Gearbox[{{ .Json.name }}]: Stopped."
+c_ok "Stopped."
 
