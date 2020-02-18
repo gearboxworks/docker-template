@@ -32,6 +32,6 @@ do
 	docker image rm -f ${GB_IMAGEVERSION}
 
 	echo "# Gearbox[${GB_IMAGEVERSION}]: Removing logs."
-	rm "${GB_VERSION}/logs/*.log"
+	rm -f "${GB_VERSION}/logs/*.log"
 done
 
