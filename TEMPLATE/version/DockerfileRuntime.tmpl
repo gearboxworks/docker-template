@@ -115,7 +115,7 @@ ARG GEARBOX_ENTRYPOINT
 USER root
 
 # 3. Copy the build directory over from gearbox-base image.
-COPY --from=gearbox-base /build /etc/gearbox
+COPY --from=gearbox-base /etc/gearbox /etc/gearbox
 
 # 4. Set up env variables.
 MAINTAINER {{ with .Json.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
