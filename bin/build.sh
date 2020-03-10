@@ -53,7 +53,7 @@ do
 	echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Building container."
 	if [ "${GITHUB_ACTIONS}" == "" ]
 	then
-		script ${LOG_ARGS} ${LOGFILE} -- \
+		script ${LOG_ARGS} ${LOGFILE} \
 			docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
 		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Log file saved to \"${LOGFILE}\""
 	fi

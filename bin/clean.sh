@@ -25,11 +25,30 @@ do
 
 	${DIR}/rm.sh "${VERSION}"
 
-	echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Removing image."
-	docker image rm -f ${GB_IMAGEMAJORVERSION}
 
-	echo "# Gearbox[${GB_IMAGEVERSION}]: Removing image."
-	docker image rm -f ${GB_IMAGEVERSION}
+	STATE="$(${DIR}/_CheckImage.sh ${GB_IMAGEMAJORVERSION})"
+	case ${STATE} in
+		'PRESENT')
+			echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Removing image."
+			docker image rm -f ${GB_IMAGEMAJORVERSION}
+			;;
+		*)
+			echo "# Gearbox[${GB_IMAGEMAJORVERSION}]: Image already removed."
+			;;
+	esac
+
+
+	STATE="$(${DIR}/_CheckImage.sh ${GB_IMAGEVERSION})"
+	case ${STATE} in
+		'PRESENT')
+			echo "# Gearbox[${GB_IMAGEVERSION}]: Removing image."
+			docker image rm -f ${GB_IMAGEVERSION}
+			;;
+		*)
+			echo "# Gearbox[${GB_IMAGEVERSION}]: Image already removed."
+			;;
+	esac
+
 
 	echo "# Gearbox[${GB_IMAGEVERSION}]: Removing logs."
 	rm -f "${GB_VERSION}/logs/*.log"

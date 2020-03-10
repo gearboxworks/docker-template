@@ -111,7 +111,7 @@ create() {
 }
 
 upload() {
-	FILES="Makefile TEMPLATE bin"
+	FILES="Makefile TEMPLATE bin release.yml"
 	echo "# Gearbox[${GB_GITREPO}]: Creating tarball release from files: ${FILES}"
 	tar zcf docker-template.tgz ${FILES}
 
