@@ -43,16 +43,22 @@ do
 
 	elif [ "${GB_REF}" != "" ]
 	then
+		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Pull ref container."
+		docker pull "${GB_REF}"
 		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Query ref container."
 		GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
 		export GEARBOX_ENTRYPOINT
 	fi
 
 	echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Building container."
-	script ${LOG_ARGS} ${LOGFILE} \
-		docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
+	if [ "${GITHUB_ACTIONS}" == "" ]
+	then
+		script ${LOG_ARGS} ${LOGFILE} -- \
+			docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
+		echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Log file saved to \"${LOGFILE}\""
+	fi
 
-	echo "# Gearbox[${GB_IMAGENAME}:${GB_VERSION}]: Log file saved to \"${LOGFILE}\""
+	docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
 
 	if [ "${GB_MAJORVERSION}" != "" ]
 	then

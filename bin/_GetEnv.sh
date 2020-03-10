@@ -1,7 +1,8 @@
 #!/bin/bash
 
 JSONFILE="$1"
-DIR="$(./bin/JsonToConfig-Darwin -json "${JSONFILE}" -template-string '{{ .Json.version }}')"
+ARCH="$(uname -s)"
+DIR="$(./bin/JsonToConfig-${ARCH} -json "${JSONFILE}" -template-string '{{ .Json.version }}')"
 if [ ! -d "${DIR}" ]
 then
 	mkdir -p "${DIR}"
@@ -42,5 +43,5 @@ OS_TYPE="$(uname -s)"; export OS_TYPE
 
 EOF
 
-./bin/JsonToConfig-Darwin -json "${JSONFILE}" -create "${DIR}/.env.tmpl" 
+./bin/JsonToConfig-${ARCH} -json "${JSONFILE}" -create "${DIR}/.env.tmpl" 
 

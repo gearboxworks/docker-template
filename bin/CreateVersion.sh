@@ -16,5 +16,5 @@ fi
 
 cp -i TEMPLATE/version.sh.tmpl .
 
-./bin/JsonToConfig-Darwin -json "${JSONFILE}" -create version.sh.tmpl -shell
+./bin/JsonToConfig-$(uname -s) -json "${JSONFILE}" -create version.sh.tmpl -shell
 

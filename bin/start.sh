@@ -23,6 +23,9 @@ do
 	${DIR}/_GetEnv.sh "${JSONFILE}"
 	. "${VERSION}/.env"
 
+	echo "# Gearbox[${GB_CONTAINERVERSION}]: Checking network."
+	${DIR}/_CheckNetwork.sh
+
 	echo "# Gearbox[${GB_CONTAINERVERSION}]: Starting container."
 	docker start ${GB_CONTAINERVERSION}
 done

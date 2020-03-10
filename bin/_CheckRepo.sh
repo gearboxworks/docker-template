@@ -15,7 +15,8 @@ then
 	echo "	all - All versions"
 	for version in ${VERSIONS}
 	do
-		echo "	$(./bin/JsonToConfig-Darwin -json "${version}/gearbox.json" -template-string '{{ .Json.version }} - {{ .Json.organization }}/{{ .Json.name }}:{{ .Json.version }}')"
+		ARCH="$(uname -s)"
+		echo "	$(./bin/JsonToConfig-${ARCH} -json "${version}/gearbox.json" -template-string '{{ .Json.version }} - {{ .Json.organization }}/{{ .Json.name }}:{{ .Json.version }}')"
 	done
 	unset VERSIONS
 fi

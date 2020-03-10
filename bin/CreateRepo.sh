@@ -13,4 +13,5 @@ ${DIR}/CreateBuild.sh "${JSONFILE}"
 ${DIR}/CreateVersion.sh "${JSONFILE}"
 
 cp TEMPLATE/README.md.tmpl .
-${DIR}/JsonToConfig-Darwin -json "${JSONFILE}" -create README.md.tmpl 
+
+${DIR}/JsonToConfig-$(uname -s) -json "${JSONFILE}" -create README.md.tmpl 
