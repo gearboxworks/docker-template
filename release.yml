@@ -17,7 +17,9 @@ jobs:
       run: exit 1
     - name: 01-pull
       id: pull
-      uses: actions/checkout@${{ github.ref }}
+      uses: actions/checkout@master
+      with:
+        ref: ${{ github.ref }}
     - name: 02-list
       run: ls -l
     - name: 03-build
