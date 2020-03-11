@@ -1,3 +1,5 @@
+![release](https://github.com/gearboxworks/docker-template/workflows/release/badge.svg?event=release)
+
 ![template 1.0.0](https://img.shields.io/badge/adminer-1.0.0-green.svg)
 
 ![Gearbox](https://github.com/gearboxworks/gearbox.github.io/raw/master/Gearbox-100x.png)
