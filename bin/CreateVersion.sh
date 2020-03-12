@@ -16,5 +16,7 @@ fi
 
 cp -i TEMPLATE/version.sh.tmpl .
 
-./bin/JsonToConfig-$(uname -s) -json "${JSONFILE}" -create version.sh.tmpl -shell
+./bin/JsonToConfig -json "${JSONFILE}" -create version.sh.tmpl -shell
+
+./bin/JsonToConfig -template ./TEMPLATE/README.md.tmpl -json "${JSONFILE}" -out README.md
 

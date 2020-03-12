@@ -18,3 +18,8 @@ cp -i TEMPLATE/build.sh.tmpl .
 
 ./bin/JsonToConfig-$(uname -s) -json "${JSONFILE}" -create build.sh.tmpl -shell
 
+if [ ! -f README.md ]
+then
+	./bin/JsonToConfig -template ./TEMPLATE/README.md.tmpl -json "${JSONFILE}" -out README.md
+fi
+
