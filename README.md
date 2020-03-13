@@ -7,9 +7,9 @@ Use it to create a Gearbox container from scratch or wrap an already existing co
 
 
 ## Repository Info
-GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-adminer?style=flat-square)
+GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-template?style=flat-square)
 
-GitHub release: ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-adminer) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-adminer?sort=semver) [![release-state](https://github.com/gearboxworks/docker-adminer/workflows/release/badge.svg?event=release)](https://github.com/gearboxworks/docker-adminer/actions?query=workflow%3Arelease)
+GitHub release: ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-template) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-template?sort=semver) [![release-state](https://github.com/gearboxworks/docker-template/workflows/release/badge.svg?event=release)](https://github.com/gearboxworks/docker-template/actions?query=workflow%3Arelease)
 
 
 * * *
