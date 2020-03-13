@@ -1,13 +1,15 @@
-![release](https://github.com/gearboxworks/docker-template/workflows/release/badge.svg?event=release)
-
-![template 1.0.0](https://img.shields.io/badge/adminer-1.0.0-green.svg)
-
 ![Gearbox](https://github.com/gearboxworks/gearbox.github.io/raw/master/Gearbox-100x.png)
 
-# Template Docker Container for Gearbox
-This is the main template repository for creating Docker containers within Gearbox.
+# [Gearbox](https://github.com/gearboxworks/) Docker container template
+This is the main template repository for creating Docker containers for [Gearbox](https://github.com/gearboxworks/).
 
 Use it to create a Gearbox container from scratch or wrap an already existing container to be used within Gearbox.
+
+
+## Repository Info
+GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-adminer?style=flat-square)
+
+GitHub release: ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-adminer) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-adminer?sort=semver) [![release-state](https://github.com/gearboxworks/docker-adminer/workflows/release/badge.svg?event=release)](https://github.com/gearboxworks/docker-adminer/actions?query=workflow%3Arelease)
 
 
 * * *
