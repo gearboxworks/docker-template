@@ -9,7 +9,7 @@ Use it to create a Gearbox container from scratch or wrap an already existing co
 ## Repository Info
 GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-template?style=flat-square)
 
-GitHub release: ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-template) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-template?sort=semver)
+GitHub release(latest): ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-template) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-template?sort=semver)
 
 
 * * *
