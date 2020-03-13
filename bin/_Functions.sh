@@ -72,7 +72,7 @@ _getVersions() {
 ################################################################################
 _listVersions() {
 	echo "	all - All versions"
-	${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}\t{{ $version }} - {{ $.Json.organization }}/{{ $.Json.name }}:{{ $version }}{{ end }}'
+	${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}\t{{ $version }} - {{ $.Json.organization }}/{{ $.Json.name }}:{{ $version }}\n{{ end }}'
 	echo ""
 }
 
@@ -287,7 +287,6 @@ gb_build() {
 			LOG_ARGS='-r -t 10'
 			;;
 	esac
-
 
 	for GB_VERSION in ${GB_VERSIONS}
 	do
