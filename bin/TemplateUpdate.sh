@@ -60,7 +60,7 @@ then
 	then
 		mkdir -p .github/workflows
 	fi
-	cp docker-template/release.yml .github/workflows/
+	cp TEMPLATE/release.yml .github/workflows/
 	rm -rf docker-template.tgz docker-template/
 	echo "# Gearbox[docker-template]: Done."
 else
