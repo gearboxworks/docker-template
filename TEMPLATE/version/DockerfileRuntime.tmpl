@@ -32,9 +32,13 @@ ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 ENV GEARBOX_ENTRYPOINT_ARGS ${GEARBOX_ENTRYPOINT_ARGS}
 LABEL gearbox.json='{{ .JsonString }}'
-{{ range $k, $v := .Json }}LABEL container.{{ $k }}="{{ $v }}"
+LABEL gearbox.version='{{ .Env.VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
+{{ range $k, $v := .Json }}{{ if eq $k "versions" }}# SKIP {{ $k }}{{ else if eq $k "env" }}# SKIP {{ $k }}{{ else }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
 {{ end }}
-{{ range $k, $v := .Json }}{{ if ne $k "env" }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
+{{ range $k, $v := $version }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
 {{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
@@ -78,7 +82,13 @@ ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 # ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 # ENV GEARBOX_ENTRYPOINT_ARGS ${GEARBOX_ENTRYPOINT_ARGS}
 LABEL gearbox.json='{{ .JsonString }}'
-{{ range $k, $v := .Json }}{{ if ne $k "env" }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
+LABEL gearbox.version='{{ .Env.VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
+{{ range $k, $v := .Json }}{{ if eq $k "versions" }}# SKIP {{ $k }}{{ else if eq $k "env" }}# SKIP {{ $k }}{{ else }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
+{{ end }}
+{{ range $k, $v := $version }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
 {{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
@@ -130,9 +140,13 @@ ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 ENV GEARBOX_ENTRYPOINT_ARGS ${GEARBOX_ENTRYPOINT_ARGS}
 LABEL gearbox.json='{{ .JsonString }}'
-{{ range $k, $v := .Json }}LABEL container.{{ $k }}="{{ $v }}"
+LABEL gearbox.version='{{ .Env.VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
+{{ range $k, $v := .Json }}{{ if eq $k "versions" }}# SKIP {{ $k }}{{ else if eq $k "env" }}# SKIP {{ $k }}{{ else }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"{{ end }}
 {{ end }}
-{{ range $k, $v := .Json }}{{ if eq $k "env" }}# {{ end }}ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
+{{ range $k, $v := $version }}LABEL container.{{ $k }}="{{ $v }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
 {{ range $k, $v := .Json.env }}ENV {{ $k | ToUpper }} "{{ $v }}"
 {{ end }}
