@@ -10,6 +10,7 @@
 	],
 	"volumes": "",
 	"restart": "--restart no",
+	"run": "",
 	"args": "/usr/local/bin/php -S 0.0.0.0:80 -t /var/www/html",
 	"env": {
 		"ADMINER_USER": "gearbox"
