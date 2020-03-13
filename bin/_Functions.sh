@@ -78,8 +78,12 @@ _listVersions() {
 ################################################################################
 gb_getenv() {
 	VERSION_DIR="$1"
-	# DIR="$(./bin/JsonToConfig-${ARCH} -json "${GB_JSONFILE}" -template-string '{{ .Json.version }}')"
-	${GB_BINFILE} -json "${GB_JSONFILE}" -template "${VERSION_DIR}/.env.tmpl" -out "${VERSION_DIR}/.env"
+	if [ -f "${VERSION_DIR}/.env.tmpl" ]
+	then
+		# DIR="$(./bin/JsonToConfig-${ARCH} -json "${GB_JSONFILE}" -template-string '{{ .Json.version }}')"
+		${GB_BINFILE} -json "${GB_JSONFILE}" -template "${VERSION_DIR}/.env.tmpl" -out "${VERSION_DIR}/.env"
+	fi
+
 	. "${VERSION_DIR}/.env"
 }
 
