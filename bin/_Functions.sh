@@ -250,19 +250,21 @@ gb_build() {
 			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Pull ref container."
 			docker pull "${GB_REF}"
 			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Query ref container."
-			GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
+			GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ index .ContainerConfig.Entrypoint 0 }}' "${GB_REF}")"
 			export GEARBOX_ENTRYPOINT
+			GEARBOX_ENTRYPOINT_ARGS="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
+			export GEARBOX_ENTRYPOINT_ARGS
 		fi
 
 		p_info "${GB_IMAGENAME}:${GB_VERSION}" "Building container."
 		if [ "${GITHUB_ACTIONS}" == "" ]
 		then
 			script ${LOG_ARGS} ${LOGFILE} \
-				docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
+				docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS .
 			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Log file saved to \"${LOGFILE}\""
 		fi
 
-		docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT .
+		docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS .
 
 		if [ "${GB_MAJORVERSION}" != "" ]
 		then
