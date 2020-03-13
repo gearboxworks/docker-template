@@ -91,16 +91,65 @@ gb_getenv() {
 
 
 ################################################################################
+gb_checkImage() {
+	STATE="$(docker image ls -q "$1")"
+	if [ "${STATE}" == "" ]
+	then
+		# Not created.
+		STATE="MISSING"
+	else
+		STATE="PRESENT"
+	fi
+}
+
+
+################################################################################
+gb_checkContainer() {
+	STATE="$(docker container ls -q -a -f name="^$1")"
+	if [ "${STATE}" == "" ]
+	then
+		# Not created.
+		STATE="MISSING"
+		return
+	fi
+
+	STATE="$(docker container ls -q -f name="^$1")"
+	if [ "${STATE}" == "" ]
+	then
+		# Not created.
+		STATE="STOPPED"
+		return
+	fi
+
+	STATE="STARTED"
+}
+
+
+################################################################################
+gb_checknetwork() {
+	STATE="$(docker network ls -qf "name=gearboxnet")"
+	if [ "${STATE}" == "" ]
+	then
+		# Create network
+		echo "Creating network"
+		docker network create --subnet 172.42.0.0/24 gearboxnet
+	fi
+}
+
+
+################################################################################
 gb_init() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Initializing repo."
 
 	gb_create-build ${GB_JSONFILE}
 	gb_create-version ${GB_JSONFILE}
 	${DIR}/JsonToConfig-$(uname -s) -json "${GB_JSONFILE}" -template TEMPLATE/README.md.tmpl -out README.md
+
+	return 0
 }
 
 
@@ -108,14 +157,14 @@ gb_init() {
 gb_create-build() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Creating build directory."
 
 	if [ -d build ]
 	then
 		p_warn "${FUNCNAME[0]}" "Directory \"build\" already exists."
-		return 0
+		return 1
 	fi
 
 	cp -i TEMPLATE/build.sh.tmpl .
@@ -123,6 +172,8 @@ gb_create-build() {
 	rm -f build.sh.tmpl build.sh
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+
+	return 0
 }
 
 
@@ -130,7 +181,7 @@ gb_create-build() {
 gb_create-version() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Creating version directory for versions: ${GB_VERSIONS}"
 
@@ -149,6 +200,8 @@ gb_create-version() {
 	done
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+
+	return 0
 }
 
 
@@ -156,7 +209,7 @@ gb_create-version() {
 gb_clean() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Cleaning up for versions: ${GB_VERSIONS}"
 
@@ -181,6 +234,7 @@ gb_clean() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 
@@ -212,6 +266,8 @@ gb_clean() {
 		p_info "${GB_IMAGEVERSION}" "Removing logs."
 		rm -f "${GB_VERSION}/logs/*.log"
 	done
+
+	return 0
 }
 
 
@@ -219,7 +275,7 @@ gb_clean() {
 gb_build() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Building image for versions: ${GB_VERSIONS}"
 
@@ -272,6 +328,7 @@ gb_build() {
 		fi
 	done
 
+	return 0
 }
 
 
@@ -279,7 +336,7 @@ gb_build() {
 gb_create() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Creating container for versions: ${GB_VERSIONS}"
 
@@ -301,35 +358,12 @@ gb_create() {
 				;;
 			*)
 				p_err "${GB_IMAGEVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 	done
 
-}
-
-
-################################################################################
-gb_list() {
-	if _getVersions $@
-	then
-		return $?
-	fi
-	p_ok "${FUNCNAME[0]}" "#### Listing image and container for versions: ${GB_VERSIONS}"
-
-	for GB_VERSION in ${GB_VERSIONS}
-	do
-		gb_getenv ${GB_VERSION}
-
-		p_info "${GB_IMAGEMAJORVERSION}" "List image."
-		docker image ls ${GB_IMAGEMAJORVERSION}
-		p_info "${GB_IMAGEVERSION}" "List image."
-		docker image ls ${GB_IMAGEVERSION}
-
-		echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
-		docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
-		p_info "${GB_CONTAINERVERSION}" "List container."
-		docker container ls -a -f name="^${GB_CONTAINERVERSION}"
-	done
+	return 0
 }
 
 
@@ -337,7 +371,7 @@ gb_list() {
 gb_info() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Image and container info for versions: ${GB_VERSIONS}"
 
@@ -356,6 +390,7 @@ gb_info() {
 		docker container ls -f name="^${GB_CONTAINERVERSION}"
 	done
 
+	return 0
 }
 
 
@@ -363,7 +398,7 @@ gb_info() {
 gb_inspect() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Inspecting image and container for versions: ${GB_VERSIONS}"
 
@@ -382,6 +417,33 @@ gb_inspect() {
 		docker container inspect name="^${GB_CONTAINERVERSION}" 2>&1
 	done
 
+	return 0
+}
+
+
+################################################################################
+gb_list() {
+	if _getVersions $@
+	then
+		return 1
+	fi
+	p_ok "${FUNCNAME[0]}" "#### Listing image and container for versions: ${GB_VERSIONS}"
+
+	for GB_VERSION in ${GB_VERSIONS}
+	do
+		gb_getenv ${GB_VERSION}
+
+		p_info "${GB_IMAGEMAJORVERSION}" "List image."
+		docker image ls ${GB_IMAGEMAJORVERSION}
+		p_info "${GB_IMAGEVERSION}" "List image."
+		docker image ls ${GB_IMAGEVERSION}
+
+		echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
+		docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
+		p_info "${GB_CONTAINERVERSION}" "List container."
+		docker container ls -a -f name="^${GB_CONTAINERVERSION}"
+	done
+	return 0
 }
 
 
@@ -389,7 +451,7 @@ gb_inspect() {
 gb_logs() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Showing build logs for versions: ${GB_VERSIONS}"
 
@@ -406,6 +468,7 @@ gb_logs() {
 		fi
 	done
 
+	return 0
 }
 
 
@@ -413,7 +476,7 @@ gb_logs() {
 gb_ports() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Showing ports for versions: ${GB_VERSIONS}"
 
@@ -435,10 +498,12 @@ gb_ports() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 	done
 
+	return 0
 }
 
 
@@ -446,7 +511,7 @@ gb_ports() {
 gb_dockerhub() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Pushing to DockerHub for versions: ${GB_VERSIONS}"
 
@@ -460,6 +525,7 @@ gb_dockerhub() {
 		docker push ${GB_IMAGEMAJORVERSION}
 	done
 
+	return 0
 }
 
 
@@ -467,19 +533,20 @@ gb_dockerhub() {
 gb_github() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Pushing to GitHub for repo."
 
 	if [ "${GITHUB_ACTIONS}" != "" ]
 	then
 		echo "# Gearbox[${GB_GITREPO}]: Running from GitHub action - ignoring."
-		return $?
+		return 1
 	fi
 
 	echo "# Gearbox[${GB_GITREPO}]: Pushing repo to GitHub."
 	git commit -a -m "Latest push" && git push
 
+	return 0
 }
 
 
@@ -487,12 +554,13 @@ gb_github() {
 gb_push() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Pushing to GitHub and DockerHub for versions: ${GB_VERSIONS}"
 
 	gb_dockerhub ${GB_VERSIONS}
 	gb_github ${GB_VERSIONS}
+	return 0
 }
 
 
@@ -500,7 +568,7 @@ gb_push() {
 gb_release() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Releasing for versions: ${GB_VERSIONS}"
 
@@ -509,6 +577,7 @@ gb_release() {
 		gb_test ${GB_VERSIONS} && \
 		gb_push ${GB_VERSIONS}
 
+	return 0
 }
 
 
@@ -516,7 +585,7 @@ gb_release() {
 gb_rm() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Removing container for versions: ${GB_VERSIONS}"
 
@@ -539,10 +608,12 @@ gb_rm() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 	done
 
+	return 0
 }
 
 
@@ -550,7 +621,7 @@ gb_rm() {
 gb_shell() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Running shell for versions: ${GB_VERSIONS}"
 
@@ -571,6 +642,7 @@ gb_shell() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 
@@ -582,10 +654,12 @@ gb_shell() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 	done
 
+	return 0
 }
 
 
@@ -593,7 +667,7 @@ gb_shell() {
 gb_ssh() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Running SSH for versions: ${GB_VERSIONS}"
 
@@ -614,6 +688,7 @@ gb_ssh() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 
@@ -633,10 +708,12 @@ gb_ssh() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 	done
 
+	return 0
 }
 
 
@@ -644,7 +721,7 @@ gb_ssh() {
 gb_start() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Starting container for versions: ${GB_VERSIONS}"
 
@@ -659,6 +736,7 @@ gb_start() {
 		docker start ${GB_CONTAINERVERSION}
 	done
 
+	return 0
 }
 
 
@@ -666,7 +744,7 @@ gb_start() {
 gb_stop() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Stopping container for versions: ${GB_VERSIONS}"
 
@@ -678,6 +756,7 @@ gb_stop() {
 		docker stop ${GB_CONTAINERVERSION}
 	done
 
+	return 0
 }
 
 
@@ -685,10 +764,11 @@ gb_stop() {
 gb_test() {
 	if _getVersions $@
 	then
-		return $?
+		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Testing container for versions: ${GB_VERSIONS}"
 
+	ALL_FAILED=""
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -706,75 +786,56 @@ gb_test() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+				return 1
 				;;
 		esac
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				SSHPASS="$(which sshpass)"
-				if [ "${SSHPASS}" != "" ]
-				then
-					SSHPASS="${SSHPASS} -pbox"
-				fi
 
-				p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
-				PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
+		for RETRY in 1 2 3 4 5 6 7 8
+		do
+			sleep 1
+			FAILED=""
 
-				ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost /etc/gearbox/unit-tests/run.sh
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				;;
-		esac
+			gb_checkContainer ${GB_CONTAINERVERSION}
+			case ${STATE} in
+				'STARTED')
+					SSHPASS="$(which sshpass)"
+					if [ "${SSHPASS}" != "" ]
+					then
+						SSHPASS="${SSHPASS} -pbox"
+					fi
+
+					p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
+					PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
+
+					if ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost /etc/gearbox/unit-tests/run.sh
+					then
+						FAILED=""
+						break
+					else
+						FAILED="Y"
+						p_warn "${GB_CONTAINERVERSION}" "SSH failed - Retry count ${RETRY}."
+					fi
+					;;
+				*)
+					p_err "${GB_CONTAINERVERSION}" "Unknown state."
+					FAILED="Y"
+					;;
+			esac
+		done
+
+		if [ "${FAILED}" != "" ]
+		then
+			FAILED_ALL="Y"
+		fi
 	done
 
-}
-
-
-################################################################################
-gb_checkImage() {
-	STATE="$(docker image ls -q "$1")"
-	if [ "${STATE}" == "" ]
+	if [ "${FAILED_ALL}" == "" ]
 	then
-		# Not created.
-		STATE="MISSING"
+		return 0
 	else
-		STATE="PRESENT"
-	fi
-}
-
-
-################################################################################
-gb_checkContainer() {
-	STATE="$(docker container ls -q -a -f name="^$1")"
-	if [ "${STATE}" == "" ]
-	then
-		# Not created.
-		STATE="MISSING"
-		return
-	fi
-
-	STATE="$(docker container ls -q -f name="^$1")"
-	if [ "${STATE}" == "" ]
-	then
-		# Not created.
-		STATE="STOPPED"
-		return
-	fi
-
-	STATE="STARTED"
-}
-
-
-################################################################################
-gb_checknetwork() {
-	STATE="$(docker network ls -qf "name=gearboxnet")"
-	if [ "${STATE}" == "" ]
-	then
-		# Create network
-		echo "Creating network"
-		docker network create --subnet 172.42.0.0/24 gearboxnet
+		p_err "${FUNCNAME[0]}" "Testing FAILED for versions: ${GB_VERSIONS}"
+		return 1
 	fi
 }
 
