@@ -1,27 +1,32 @@
 {
 	"state": "production",
 	"organization": "gearboxworks",
-	"name": "postgresql",
+	"name": "adminer",
 	"maintainer": "Gearbox Team <team@gearbox.works>",
-	"version": "12.2",
-	"majorversion": "",
-	"latest": "1",
-	"class": "dbserver",
+	"class": "admin",
 	"network": "--network gearboxnet",
 	"ports": [
-		"8080",
-		"5432"
+		"80"
 	],
 	"volumes": "",
 	"restart": "--restart no",
-	"args": "-d postgres",
+	"args": "/usr/local/bin/php -S 0.0.0.0:80 -t /var/www/html",
 	"env": {
-		"POSTGRES_USER": "gearbox",
-		"POSTGRES_PASSWORD": "password",
-		"PGDATA": "/var/lib/postgresql/data"
+		"ADMINER_USER": "gearbox"
 	},
-	"ref": "postgres:12.2-alpine",
-	"refurl": "https://www.postgresql.org/",
-	"base": "gearboxworks/gearbox-base:alpine-3.11"
+	"refurl": "https://www.adminer.org/",
+	"versions": {
+		"4.2.0": {
+			"majorversion": "4.2",
+			"latest": false,
+			"ref": "adminer:4.2.0",
+			"base": "gearboxworks/gearbox-base:alpine-3.3"
+		},
+		"4.7.6": {
+			"majorversion": "4.7",
+			"latest": true,
+			"ref": "adminer:4.7.6",
+			"base": "gearboxworks/gearbox-base:alpine-3.9"
+		}
+	}
 }
-
