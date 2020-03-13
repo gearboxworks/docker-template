@@ -98,7 +98,8 @@ init: *.json
 .FORCE:
 %.json: .FORCE
 	@echo "Gearbox: Initialize repository."
-	@./bin/CreateRepo.sh "$@"
+	@./bin/create-build.sh "all"
+	@./bin/create-version.sh "all"
 
 
 ################################################################################
