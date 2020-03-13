@@ -164,7 +164,7 @@ gb_create-build() {
 	if [ -d build ]
 	then
 		p_warn "${FUNCNAME[0]}" "Directory \"build\" already exists."
-		return 1
+		return 0
 	fi
 
 	cp -i TEMPLATE/build.sh.tmpl .
