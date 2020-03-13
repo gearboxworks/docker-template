@@ -85,6 +85,71 @@ gb_getenv() {
 
 
 ################################################################################
+gb_init() {
+	echo "################################################################################"
+	if _getVersions $@
+	then
+		return $?
+	fi
+	echo "# Gearbox[${FUNCNAME[0]}]: Initializing repo."
+
+	gb_create-build ${GB_JSONFILE}
+	gb_create-version ${GB_JSONFILE}
+	${DIR}/JsonToConfig-$(uname -s) -json "${GB_JSONFILE}" -template TEMPLATE/README.md.tmpl -out README.md
+}
+
+
+################################################################################
+gb_create-build() {
+	echo "################################################################################"
+	if _getVersions $@
+	then
+		return $?
+	fi
+	echo "# Gearbox[${FUNCNAME[0]}]: Creating build directory."
+
+	if [ -d build ]
+	then
+		echo "# Gearbox[${FUNCNAME[0]}]: Directory \"build\" already exists."
+		return 0
+	fi
+
+	cp -i TEMPLATE/build.sh.tmpl .
+	${GB_BINFILE} -json ${GB_JSONFILE} -create build.sh.tmpl -shell
+	rm -f build.sh.tmpl build.sh
+
+	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+}
+
+
+################################################################################
+gb_create-version() {
+	echo "################################################################################"
+	if _getVersions $@
+	then
+		return $?
+	fi
+	echo "# Gearbox[${FUNCNAME[0]}]: Creating version directory for versions: ${GB_VERSIONS}"
+
+
+	for GB_VERSION in ${GB_VERSIONS}
+	do
+		if [ -d ${GB_VERSION} ]
+		then
+			echo "# Gearbox[${GB_VERSION}]: Directory \"${GB_VERSIONS}\" already exists."
+		else
+			echo "# Gearbox[${GB_VERSION}]: Creating version directory \"${GB_VERSIONS}\"."
+			cp -i TEMPLATE/version.sh.tmpl .
+			${GB_BINFILE} -json ${GB_JSONFILE} -create version.sh.tmpl -shell
+			rm -f version.sh.tmpl version.sh
+		fi
+	done
+
+	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+}
+
+
+################################################################################
 gb_clean() {
 	echo "################################################################################"
 	if _getVersions $@
