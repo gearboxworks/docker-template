@@ -10,7 +10,7 @@ GB_BINDIR="$(./bin/JsonToConfig -json-string '{}' -template-string '{{ .DirPath 
 GB_BASEDIR="$(dirname "$GB_BINDIR")"
 GB_JSONFILE="${GB_BASEDIR}/gearbox.json"
 
-GB_VERSIONS="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}{{ $version }}{{ end }}')"
+GB_VERSIONS="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}{{ $version }} {{ end }}')"
 GB_VERSIONS="$(echo ${GB_VERSIONS})"	# Easily remove CR
 
 GITBIN="$(which git)"
@@ -186,20 +186,20 @@ gb_create-version() {
 	p_ok "${FUNCNAME[0]}" "Creating version directory for versions: ${GB_VERSIONS}"
 
 
+	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		if [ -d ${GB_VERSION} ]
 		then
-			p_warn "${FUNCNAME[0]}" "Directory \"${GB_VERSIONS}\" already exists."
+			p_warn "${FUNCNAME[0]}" "Directory \"${GB_VERSION}\" already exists."
 		else
-			p_info "${FUNCNAME[0]}" "Creating version directory \"${GB_VERSIONS}\"."
+			p_info "${FUNCNAME[0]}" "Creating version directory \"${GB_VERSION}\"."
 			cp -i TEMPLATE/version.sh.tmpl .
 			${GB_BINFILE} -json ${GB_JSONFILE} -create version.sh.tmpl -shell
 			rm -f version.sh.tmpl version.sh
 		fi
 	done
-
-	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
 
 	return 0
 }

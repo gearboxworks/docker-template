@@ -1,8 +1,12 @@
 #!/bin/bash
 # {{ .CreationWarning }}
 # {{ .CreationInfo }}
-{{ if not .Json.name }}
-# No name
+{{ $version := FindInMap .Json.versions .Env.GB_VERSION }}
+{{ if not $version }}
+# No version found in gearbox.json
+
+{{ else if not .Json.name }}
+# No name found in gearbox.json
 
 {{ else }}
 {{ range $key, $value := .Json.versions }}
