@@ -309,6 +309,31 @@ gb_create() {
 
 
 ################################################################################
+gb_list() {
+	if _getVersions $@
+	then
+		return $?
+	fi
+	p_ok "${FUNCNAME[0]}" "#### Listing image and container for versions: ${GB_VERSIONS}"
+
+	for GB_VERSION in ${GB_VERSIONS}
+	do
+		gb_getenv ${GB_VERSION}
+
+		p_info "${GB_IMAGEMAJORVERSION}" "List image."
+		docker image ls ${GB_IMAGEMAJORVERSION}
+		p_info "${GB_IMAGEVERSION}" "List image."
+		docker image ls ${GB_IMAGEVERSION}
+
+		echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
+		docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
+		p_info "${GB_CONTAINERVERSION}" "List container."
+		docker container ls -a -f name="^${GB_CONTAINERVERSION}"
+	done
+}
+
+
+################################################################################
 gb_info() {
 	if _getVersions $@
 	then
@@ -357,32 +382,6 @@ gb_inspect() {
 		docker container inspect name="^${GB_CONTAINERVERSION}" 2>&1
 	done
 
-}
-
-
-################################################################################
-gb_list() {
-	if _getVersions $@
-	then
-		echo "FUCK"
-		return $?
-	fi
-	p_ok "${FUNCNAME[0]}" "#### Listing image and container for versions: ${GB_VERSIONS}"
-
-	for GB_VERSION in ${GB_VERSIONS}
-	do
-		gb_getenv ${GB_VERSION}
-
-		p_info "${GB_IMAGEMAJORVERSION}" "List image."
-		docker image ls ${GB_IMAGEMAJORVERSION}
-		p_info "${GB_IMAGEVERSION}" "List image."
-		docker image ls ${GB_IMAGEVERSION}
-
-		echo "# Gearbox[${GB_CONTAINERMAJORVERSION}]: List container."
-		docker container ls -a -f name="^${GB_CONTAINERMAJORVERSION}"
-		p_info "${GB_CONTAINERVERSION}" "List container."
-		docker container ls -a -f name="^${GB_CONTAINERVERSION}"
-	done
 }
 
 
