@@ -573,8 +573,7 @@ gb_release() {
 
 	gb_clean ${GB_VERSIONS} && \
 		gb_build ${GB_VERSIONS} && \
-		gb_test ${GB_VERSIONS} && \
-		gb_push ${GB_VERSIONS}
+		gb_test ${GB_VERSIONS}
 
 	return 0
 }
