@@ -110,6 +110,13 @@ if [ "${CMD}" == "" ]
 then
 	echo "# Gearbox[${GB_GITREPO}]: Doing nothing."
 	help
+
+	find_last_version
+	echo "# Gearbox[${GB_GITREPO}]: Last version: ${LAST_VERSION}"
+
+	get_description ${LAST_VERSION}
+	echo "# Gearbox[${GB_GITREPO}]: Last description: \"${LAST_DESCRIPTION}\""
+
 	exit 1
 fi
 
@@ -127,6 +134,10 @@ then
 		echo "# Gearbox[${GB_GITREPO}]: No version entered? OK doing nothing."
 		exit 1
 	fi
+
+#	if [ "${VERSION}" == "${LAST_VERSION}" ]
+#	then
+#	fi
 fi
 
 if [ "${DESCRIPTION}" == "" ]
