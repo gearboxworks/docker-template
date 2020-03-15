@@ -234,6 +234,10 @@ gb_clean() {
 		gb_getenv ${GB_VERSION}
 
 
+		p_info "${GB_IMAGEVERSION}" "Removing logs."
+		rm -f ${GB_VERSION}/logs/*.log
+
+
 		gb_checkContainer ${GB_CONTAINERVERSION}
 		case ${STATE} in
 			'STARTED')
@@ -276,10 +280,6 @@ gb_clean() {
 				p_warn "${GB_IMAGEVERSION}" "Image already removed."
 				;;
 		esac
-
-
-		p_info "${GB_IMAGEVERSION}" "Removing logs."
-		rm -f "${GB_VERSION}/logs/*.log"
 	done
 
 	return 0
