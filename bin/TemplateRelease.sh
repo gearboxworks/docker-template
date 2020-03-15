@@ -79,11 +79,9 @@ find_last_version() {
 }
 
 get_description() {
-set -x
 	GET_VERSION="$1"; export GET_VERSION
 	${DIR}/github-release info -u gearboxworks -r "${GB_GITREPO}" -j > /tmp/z
 	LAST_DESCRIPTION="$(${DIR}/JsonToConfig -json /tmp/z -template-string '{{ range $k,$v := .Json.Releases }}{{ if eq .tag_name $.Env.GET_VERSION }}{{ .body }}{{ end }}{{ end }}')"
-set +x
 }
 
 
