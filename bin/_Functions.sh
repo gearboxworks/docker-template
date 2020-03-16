@@ -570,9 +570,12 @@ gb_release() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Releasing for versions: ${GB_VERSIONS}"
 
-	gb_clean ${GB_VERSIONS} && \
-		gb_build ${GB_VERSIONS} && \
-		gb_test ${GB_VERSIONS}
+	for GB_VERSION in ${GB_VERSIONS}
+	do
+		gb_clean ${GB_VERSION} && \
+		gb_build ${GB_VERSION} && \
+		gb_test ${GB_VERSION}
+	done
 
 	return 0
 }
