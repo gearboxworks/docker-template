@@ -333,6 +333,11 @@ gb_build() {
 		then
 			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:${GB_MAJORVERSION}
 		fi
+
+		if [ "${GB_LATEST}" == "true" ]
+		then
+			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:latest
+		fi
 	done
 
 	return 0
