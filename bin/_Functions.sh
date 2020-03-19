@@ -280,6 +280,18 @@ gb_clean() {
 				p_warn "${GB_IMAGEVERSION}" "Image already removed."
 				;;
 		esac
+
+
+		gb_checkImage ${GB_IMAGENAME}:latest
+		case ${STATE} in
+			'PRESENT')
+				p_info "${GB_IMAGENAME}:latest" "Removing image."
+				docker image rm -f ${GB_IMAGENAME}:latest
+				;;
+			*)
+				p_warn "${GB_IMAGENAME}:latest" "Image already removed."
+				;;
+		esac
 	done
 
 	return 0
