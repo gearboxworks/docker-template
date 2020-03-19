@@ -526,6 +526,12 @@ gb_dockerhub() {
 		docker push ${GB_IMAGEVERSION}
 		p_info "${GB_IMAGEMAJORVERSION}" "Pushing image to DockerHub."
 		docker push ${GB_IMAGEMAJORVERSION}
+
+		if [ "${GB_LATEST}" == "true" ]
+		then
+			p_info "${GB_IMAGENAME}:latest" "Pushing image to DockerHub."
+			docker push "${GB_IMAGENAME}:latest"
+		fi
 	done
 
 	return 0
