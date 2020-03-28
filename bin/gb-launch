@@ -9,4 +9,4 @@ then
 	exit
 fi
 
-exec "${EXEC}" -name ${CONTAINER} "$@"
+exec "${EXEC}" -gb-name ${CONTAINER} "$@"
