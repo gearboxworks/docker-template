@@ -5,7 +5,7 @@
 {{ if not $version }}
 # No version found in gearbox.json
 
-{{ else if not .Json.name }}
+{{ else if not .Json.meta.name }}
 # No name found in gearbox.json
 
 {{ else }}
@@ -40,7 +40,7 @@ fi
 TMPLDIRS="$(find ${VERSION}/ -name '*JSON_NAME*')"
 for dir in ${TMPLDIRS}
 do
-	NEWDIR="$(echo -n "${dir}" | sed 's/JSON_NAME/{{ $.Json.name }}/')"
+	NEWDIR="$(echo -n "${dir}" | sed 's/JSON_NAME/{{ $.Json.meta.name }}/')"
 	mv -i "${dir}" "${NEWDIR}"
 done
 
@@ -48,7 +48,7 @@ done
 TMPLFILES="$(find ${VERSION}/ -name '*\.tmpl')"
 for file in ${TMPLFILES}
 do
-	OUTFILE="$(echo -n "${file}" | sed 's/JSON_NAME/{{ $.Json.name }}/')"
+	OUTFILE="$(echo -n "${file}" | sed 's/JSON_NAME/{{ $.Json.meta.name }}/')"
 	if [ "${file}" != "${OUTFILE}" ]
 	then
 		mv -i "${file}" "${OUTFILE}"

@@ -8,7 +8,7 @@ ifdef TARGET_VERSION
 
 ################################################################################
 JSONCMD := ./bin/JsonToConfig -json $(TARGET_VERSION)/gearbox.json
-JSONTEST := $(shell $(JSONCMD) -template-string '{{ .Json.name }}')
+JSONTEST := $(shell $(JSONCMD) -template-string '{{ .Json.meta.name }}')
 ifeq ($(JSONTEST),)
 $(error "# Gearbox: ERROR - No ./bin/JsonToConfig binary.")
 
