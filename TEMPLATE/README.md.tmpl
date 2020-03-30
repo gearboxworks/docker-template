@@ -12,7 +12,7 @@ GitHub release(latest): ![last-release-date](https://img.shields.io/github/relea
 
 
 ## Supported versions and respective Dockerfiles
-{{- if .Json.base  }}
+{{- if .Json.build.base  }}
 |  Base   | GitHub Version | Docker Version | Docker Size | Docker Tags |
 | ------- | -------------- | -------------- | ----------- | ----------- |
 {{- range $key, $value := .Json.versions }}
