@@ -110,6 +110,7 @@ init: *.json
 ################################################################################
 update:
 	@./bin/TemplateUpdate.sh
+	@make init
 
 git-release:
 	@./bin/TemplateRelease.sh
