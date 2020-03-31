@@ -57,6 +57,9 @@ endif
 
 ################################################################################
 # Image related commands.
+.DEFAULT:
+	@make -k help
+
 default: all
 
 all:
@@ -65,6 +68,8 @@ all:
 help:
 	@echo "################################################################################"
 	@echo "init				- Initialize repository from TEMPLATE."
+	@echo "update				- Update repository TEMPLATE."
+	@echo "git-release			- Generate a repository release."
 	@echo ""
 	@echo "clean-[all | <VERSION>]		- Clean runtime container image."
 	@echo "build-[all | <VERSION>]		- Generate runtime container image."
@@ -103,10 +108,10 @@ init: *.json
 
 
 ################################################################################
-template-update:
+update:
 	@./bin/TemplateUpdate.sh
 
-template-release:
+git-release:
 	@./bin/TemplateRelease.sh
 
 
