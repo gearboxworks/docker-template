@@ -28,6 +28,8 @@ then
 	GB_NAME="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ .Json.meta.name }}')"
 fi
 
+GB_REF="$(${GB_BINFILE} -json gearbox.json -template-string '{{ .Json.build.base }}')"
+
 GITBIN="$(which git)"
 GB_GITURL="$(${GITBIN} config --get remote.origin.url)"
 if [ "${GB_GITURL}" == "" ]
@@ -195,6 +197,7 @@ gb_create-build() {
 	fi
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+
 	cp ./TEMPLATE/Makefile .
 	if [ "${GB_REF}" == "base" ]
 	then
