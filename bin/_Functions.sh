@@ -96,25 +96,25 @@ _listVersions() {
 
 ################################################################################
 gb_getenv() {
-	VERSION_DIR="$1"
+	GB_VERDIR="${GB_BASEDIR}/versions/$1"
+	export GB_VERDIR
+
 	if [ -f "TEMPLATE/version/.env.tmpl" ]
 	then
-		# DIR="$(./bin/JsonToConfig-${ARCH} -json "${GB_JSONFILE}" -template-string '{{ .Json.version }}')"
-		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/.env.tmpl" -out "${VERSION_DIR}/.env"
+		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/.env.tmpl" -out "${GB_VERDIR}/.env"
 	fi
-	. "${VERSION_DIR}/.env"
-
-	GB_VERDIR="${GB_BASEDIR}/versions/${GB_VERSION}"
-	export GB_VERDIR
+	. "${GB_VERDIR}/.env"
 }
 
 
 ################################################################################
 gb_getdockerfile() {
-	VERSION_DIR="$1"
+	GB_VERDIR="${GB_BASEDIR}/versions/$1"
+	export GB_VERDIR
+
 	if [ -f "TEMPLATE/version/DockerfileRuntime.tmpl" ]
 	then
-		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/DockerfileRuntime.tmpl" -out "${VERSION_DIR}/DockerfileRuntime"
+		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/DockerfileRuntime.tmpl" -out "${GB_VERDIR}/DockerfileRuntime"
 	fi
 }
 
