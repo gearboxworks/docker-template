@@ -195,6 +195,7 @@ gb_create-build() {
 	fi
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+	cp ./TEMPLATE/Makefile .
 	cp "${GB_JSONFILE}" build/
 
 	return 0
