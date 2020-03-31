@@ -26,11 +26,16 @@ else
 fi
 
 ################################################################################
-if [ -f "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" ]
-then
-	cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox-{{ .Json.meta.name }}.json"
-	cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox.json"
-fi
+#if [ -f "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" ]
+#then
+#	if [ "${GB_REF}" == "base" ]
+#	then
+#		cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/{{ .Json.meta.name }}.json"
+#	else
+#		cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox-{{ .Json.meta.name }}.json"
+#	fi
+#	cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox.json"
+#fi
 
 ################################################################################
 TMPLDIRS="$(find ${DIR}/ -name '*JSON_NAME*')"
