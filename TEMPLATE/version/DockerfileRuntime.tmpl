@@ -1,4 +1,4 @@
-{{- $version := FindInMap .Json.versions .Env.VERSION }}
+{{- $version := FindInMap .Json.versions .Env.GB_VERSION }}
 {{- if not $version }}
 ################################################################################
 # No version
@@ -17,7 +17,7 @@
 # {{ .CreationInfo }}
 # Plain Docker container for docker-{{ .Json.meta.name }} based off {{ $version.base }}
 
-ARG VERSION={{ .Env.VERSION }}
+ARG VERSION={{ .Env.GB_VERSION }}
 
 # 1. First reference the gearbox-base image.
 FROM {{ $version.base }}
@@ -32,8 +32,8 @@ ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 ENV GEARBOX_ENTRYPOINT_ARGS ${GEARBOX_ENTRYPOINT_ARGS}
 LABEL gearbox.json='{{ .JsonString }}'
-LABEL gearbox.version='{{ .Env.VERSION }}'
-ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
+LABEL gearbox.version='{{ .Env.GB_VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.GB_VERSION }}"
 {{- range $k, $v := .Json.meta }}
 	{{- if eq $k "versions" }}
 # SKIP {{ $k }}
@@ -89,7 +89,7 @@ WORKDIR /home/gearbox/projects
 # {{ .CreationInfo }}
 # Base Reference Docker container for docker-{{ .Json.meta.name }} based off {{ $version.base }}
 
-ARG VERSION={{ .Env.VERSION }}
+ARG VERSION={{ .Env.GB_VERSION }}
 
 # 1. First reference the gearbox-base image.
 FROM {{ $version.base }}
@@ -102,9 +102,9 @@ MAINTAINER {{ with .Json.meta.maintainer }}{{ . }}{{ else }}Unknown{{ end }}
 ENV GEARBOX_CONTAINER_NAME "docker-{{ .Json.meta.name }}"
 ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 LABEL gearbox.json='{{ .JsonString }}'
-LABEL gearbox.version='{{ .Env.VERSION }}'
-ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
-ENV GEARBOX_BASE_VERSION "{{ .Env.VERSION }}"
+LABEL gearbox.version='{{ .Env.GB_VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.GB_VERSION }}"
+ENV GEARBOX_BASE_VERSION "{{ .Env.GB_VERSION }}"
 ENV GEARBOX_BASE_REF "{{ $version.ref }}"
 {{- range $k, $v := .Json.meta }}
 	{{- if eq $k "versions" }}
@@ -162,7 +162,7 @@ CMD ["/init"]
 # {{ .CreationInfo }}
 # Referenced Docker container for docker-{{ .Json.meta.name }} based off {{ $version.base }} with {{ $version.ref }} overlayed.
 
-ARG VERSION={{ .Env.VERSION }}
+ARG VERSION={{ .Env.GB_VERSION }}
 
 # 1. First reference the gearbox-base image.
 FROM {{ $version.base }} as gearbox-base
@@ -184,8 +184,8 @@ ENV GEARBOX_CONTAINER_VERSION ${VERSION}
 ENV GEARBOX_ENTRYPOINT ${GEARBOX_ENTRYPOINT}
 ENV GEARBOX_ENTRYPOINT_ARGS ${GEARBOX_ENTRYPOINT_ARGS}
 LABEL gearbox.json='{{ .JsonString }}'
-LABEL gearbox.version='{{ .Env.VERSION }}'
-ENV GEARBOX_VERSION "{{ .Env.VERSION }}"
+LABEL gearbox.version='{{ .Env.GB_VERSION }}'
+ENV GEARBOX_VERSION "{{ .Env.GB_VERSION }}"
 {{- range $k, $v := .Json.meta }}
 	{{- if eq $k "versions" }}
 # SKIP {{ $k }}
