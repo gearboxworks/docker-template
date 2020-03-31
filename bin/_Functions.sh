@@ -95,13 +95,22 @@ _listVersions() {
 ################################################################################
 gb_getenv() {
 	VERSION_DIR="$1"
-	if [ -f "${VERSION_DIR}/.env.tmpl" ]
+	if [ -f "TEMPLATE/version/.env.tmpl" ]
 	then
 		# DIR="$(./bin/JsonToConfig-${ARCH} -json "${GB_JSONFILE}" -template-string '{{ .Json.version }}')"
-		${GB_BINFILE} -json "${GB_JSONFILE}" -template "${VERSION_DIR}/.env.tmpl" -out "${VERSION_DIR}/.env"
+		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/.env.tmpl" -out "${VERSION_DIR}/.env"
 	fi
-
 	. "${VERSION_DIR}/.env"
+}
+
+
+################################################################################
+gb_getdockerfile() {
+	VERSION_DIR="$1"
+	if [ -f "TEMPLATE/version/DockerfileRuntime.tmpl" ]
+	then
+		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/DockerfileRuntime.tmpl" -out "${VERSION_DIR}/DockerfileRuntime"
+	fi
 }
 
 
@@ -357,6 +366,8 @@ gb_build() {
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
+		gb_getdockerfile ${GB_VERSION}
+
 
 		# LOGFILE="${GB_VERSION}/logs/$(date +'%Y%m%d-%H%M%S').log"
 		LOGFILE="${GB_VERSION}/logs/build.log"
