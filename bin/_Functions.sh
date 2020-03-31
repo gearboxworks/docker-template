@@ -184,7 +184,7 @@ gb_create-build() {
 		return 1
 	fi
 
-	if [ ! -d build ]
+	if [ -d build ]
 	then
 		p_ok "${FUNCNAME[0]}" "Updating build directory."
 	else
