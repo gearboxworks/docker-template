@@ -8,7 +8,7 @@ ifdef TARGET_VERSION
 
 ################################################################################
 JSONCMD := ./bin/JsonToConfig -json $(TARGET_VERSION)/gearbox.json
-JSONTEST := $(shell $(JSONCMD) -template-string '{{ .Json.meta.name }}')
+JSONTEST := $(shell $(JSONCMD) -template-string '{{ .Json.name }}')
 ifeq ($(JSONTEST),)
 $(error "# Gearbox: ERROR - No ./bin/JsonToConfig binary.")
 
@@ -57,6 +57,9 @@ endif
 
 ################################################################################
 # Image related commands.
+.DEFAULT:
+	@make -k help
+
 default: all
 
 all:
@@ -65,6 +68,8 @@ all:
 help:
 	@echo "################################################################################"
 	@echo "init				- Initialize repository from TEMPLATE."
+	@echo "update				- Update repository TEMPLATE."
+	@echo "git-release			- Generate a repository release."
 	@echo ""
 	@echo "clean-[all | <VERSION>]		- Clean runtime container image."
 	@echo "build-[all | <VERSION>]		- Generate runtime container image."
@@ -100,6 +105,14 @@ init: *.json
 	@echo "Gearbox: Initialize repository."
 	@./bin/create-build.sh "all"
 	@./bin/create-version.sh "all"
+
+
+################################################################################
+update:
+	@./bin/TemplateUpdate.sh
+
+git-release:
+	@./bin/TemplateRelease.sh
 
 
 ################################################################################
