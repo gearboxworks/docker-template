@@ -196,7 +196,12 @@ gb_create-build() {
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
 	cp ./TEMPLATE/Makefile .
-	cp "${GB_JSONFILE}" "build/gearbox-${GB_NAME}.json"
+	if [ "${GB_REF}" == "base" ]
+	then
+		cp "${GB_JSONFILE}" build/
+	else
+		cp "${GB_JSONFILE}" "build/gearbox-${GB_NAME}.json"
+	fi
 
 	return 0
 }
