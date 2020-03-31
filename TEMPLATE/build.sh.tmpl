@@ -29,6 +29,7 @@ fi
 if [ -f "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" ]
 then
 	cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox-{{ .Json.meta.name }}.json"
+	cp "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${DIR}/gearbox.json"
 fi
 
 ################################################################################

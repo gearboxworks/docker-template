@@ -193,13 +193,33 @@ gb_create-build() {
 
 
 ################################################################################
+gb_update-build() {
+	if _getVersions $@
+	then
+		return 1
+	fi
+	p_ok "${FUNCNAME[0]}" "Updating build directory."
+
+	if [ ! -d build ]
+	then
+		p_warn "${FUNCNAME[0]}" "Directory \"build\" doesn't exist."
+		return 0
+	fi
+
+	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+	cp "${GB_JSONFILE}" "build/${GB_JSONFILE}"
+
+	return 0
+}
+
+
+################################################################################
 gb_create-version() {
 	if _getVersions $@
 	then
 		return 1
 	fi
 	p_ok "${FUNCNAME[0]}" "Creating version directory for versions: ${GB_VERSIONS}"
-
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
 
@@ -213,6 +233,33 @@ gb_create-version() {
 			cp -i TEMPLATE/version.sh.tmpl .
 			${GB_BINFILE} -json ${GB_JSONFILE} -create version.sh.tmpl -shell
 			rm -f version.sh.tmpl version.sh
+		fi
+	done
+
+	return 0
+}
+
+
+################################################################################
+gb_update-version() {
+	if _getVersions $@
+	then
+		return 1
+	fi
+	p_ok "${FUNCNAME[0]}" "Creating version directory for versions: ${GB_VERSIONS}"
+
+	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
+
+	for GB_VERSION in ${GB_VERSIONS}
+	do
+		if [ ! -d ${GB_VERSION} ]
+		then
+			p_warn "${FUNCNAME[0]}" "Directory \"${GB_VERSION}\" doesn't exist."
+		else
+			p_info "${FUNCNAME[0]}" "Updating version directory \"${GB_VERSION}\"."
+			cp -i TEMPLATE/version-update.sh.tmpl .
+			${GB_BINFILE} -json ${GB_JSONFILE} -create version-update.sh.tmpl -shell
+			rm -f version-update.sh.tmpl version-update.sh
 		fi
 	done
 

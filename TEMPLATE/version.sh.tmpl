@@ -31,10 +31,10 @@ else
 fi
 
 ################################################################################
-if [ -f "{{ $.JsonFile.Dir }}/{{ $.JsonFile.Name }}" ]
-then
-	cp "{{ $.JsonFile.Dir }}/{{ $.JsonFile.Name }}" "${VERSION}/gearbox.json"
-fi
+#if [ -f "{{ $.JsonFile.Dir }}/{{ $.JsonFile.Name }}" ]
+#then
+#	cp "{{ $.JsonFile.Dir }}/{{ $.JsonFile.Name }}" "${VERSION}/gearbox.json"
+#fi
 
 ################################################################################
 TMPLDIRS="$(find ${VERSION}/ -name '*JSON_NAME*')"
