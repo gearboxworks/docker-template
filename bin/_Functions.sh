@@ -105,6 +105,7 @@ gb_getenv() {
 	. "${VERSION_DIR}/.env"
 
 	GB_VERDIR="${GB_BASEDIR}/versions/${GB_VERSION}"
+	export GB_VERDIR
 }
 
 
@@ -225,7 +226,7 @@ gb_create-version() {
 		gb_getenv ${GB_VERSION}
 
 
-		if [ -d ${GB_VERSION} ]
+		if [ -d ${GB_VERDIR} ]
 		then
 			p_info "${FUNCNAME[0]}" "Updating version directory \"${GB_VERSION}\"."
 			${GB_BINFILE} -json ${GB_JSONFILE} -template ./TEMPLATE/version/DockerfileRuntime.tmpl -out "${GB_VERDIR}/DockerfileRuntime"
