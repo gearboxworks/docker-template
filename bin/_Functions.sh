@@ -196,7 +196,7 @@ gb_create-build() {
 
 	${GB_BINFILE} -template ./TEMPLATE/README.md.tmpl -json ${GB_JSONFILE} -out README.md
 	cp ./TEMPLATE/Makefile .
-	cp "${GB_JSONFILE}" build/
+	cp "${GB_JSONFILE}" "build/gearbox-${GB_NAME}.json"
 
 	return 0
 }
@@ -223,7 +223,7 @@ gb_create-version() {
 			p_info "${FUNCNAME[0]}" "Creating version directory \"${GB_VERSION}\"."
 			cp -i TEMPLATE/version.sh.tmpl .
 			${GB_BINFILE} -json ${GB_JSONFILE} -create version.sh.tmpl -shell
-			rm -f version.sh.tmpl version.sh
+			rm -f version.sh.tmpl version.sh "${GB_VERSION}/gearbox.json"
 		fi
 	done
 
