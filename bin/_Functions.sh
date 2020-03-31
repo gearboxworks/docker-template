@@ -103,6 +103,8 @@ gb_getenv() {
 		${GB_BINFILE} -json "${GB_JSONFILE}" -template "TEMPLATE/version/.env.tmpl" -out "${VERSION_DIR}/.env"
 	fi
 	. "${VERSION_DIR}/.env"
+
+	GB_VERDIR="${GB_BASEDIR}/versions/${GB_VERSION}"
 }
 
 
@@ -220,18 +222,21 @@ gb_create-version() {
 
 	for GB_VERSION in ${GB_VERSIONS}
 	do
+		gb_getenv ${GB_VERSION}
+
+
 		if [ -d ${GB_VERSION} ]
 		then
 			p_info "${FUNCNAME[0]}" "Updating version directory \"${GB_VERSION}\"."
-			${GB_BINFILE} -json ${GB_JSONFILE} -template ./TEMPLATE/version/DockerfileRuntime.tmpl -out "${GB_VERSION}/DockerfileRuntime"
-			${GB_BINFILE} -json ${GB_JSONFILE} -template ./TEMPLATE/version/.env.tmpl -out "${GB_VERSION}/.env"
-			rm -f "${GB_VERSION}/gearbox.json"
+			${GB_BINFILE} -json ${GB_JSONFILE} -template ./TEMPLATE/version/DockerfileRuntime.tmpl -out "${GB_VERDIR}/DockerfileRuntime"
+			${GB_BINFILE} -json ${GB_JSONFILE} -template ./TEMPLATE/version/.env.tmpl -out "${GB_VERDIR}/.env"
+			rm -f "${GB_VERDIR}/gearbox.json"
 
 		else
 			p_info "${FUNCNAME[0]}" "Creating version directory \"${GB_VERSION}\"."
 			cp -i TEMPLATE/version.sh.tmpl .
 			${GB_BINFILE} -json ${GB_JSONFILE} -create version.sh.tmpl -shell
-			rm -f version.sh.tmpl version.sh "${GB_VERSION}/gearbox.json"
+			rm -f version.sh.tmpl version.sh "${GB_VERDIR}/gearbox.json"
 		fi
 	done
 
@@ -256,7 +261,7 @@ gb_clean() {
 
 
 		p_info "${GB_IMAGEVERSION}" "Removing logs."
-		rm -f ${GB_VERSION}/logs/*.log
+		rm -f ${GB_VERDIR}/logs/*.log
 
 
 		gb_checkContainer ${GB_CONTAINERVERSION}
@@ -334,8 +339,8 @@ gb_build() {
 		gb_getdockerfile ${GB_VERSION}
 
 
-		# LOGFILE="${GB_VERSION}/logs/$(date +'%Y%m%d-%H%M%S').log"
-		LOGFILE="${GB_VERSION}/logs/build.log"
+		# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
+		LOGFILE="${GB_VERDIR}/logs/build.log"
 
 		if [ "${GB_REF}" == "base" ]
 		then
@@ -497,10 +502,10 @@ gb_logs() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		if [ -f "${GB_VERSION}/logs/build.log" ]
+		if [ -f "${GB_VERDIR}/logs/build.log" ]
 		then
 			p_info "${GB_IMAGEMAJORVERSION}" "Showing logs."
-			script -dp "${GB_VERSION}/logs/build.log" | less -SinR
+			script -dp "${GB_VERDIR}/logs/build.log" | less -SinR
 		else
 			p_warn "${GB_IMAGEMAJORVERSION}" "No logs."
 		fi
@@ -854,8 +859,8 @@ gb_test() {
 					p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
 					PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
 
-					# LOGFILE="${GB_VERSION}/logs/$(date +'%Y%m%d-%H%M%S').log"
-					LOGFILE="${GB_VERSION}/logs/test.log"
+					# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
+					LOGFILE="${GB_VERDIR}/logs/test.log"
 
 					#if [ "${GITHUB_ACTIONS}" == "" ]
 					#then
