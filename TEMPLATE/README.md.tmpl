@@ -40,13 +40,72 @@ In other words, our vision for [Gearbox](https://github.com/gearboxworks/) users
 
 
 ## Using this container.
-This container has been designed to work within the [Gearbox](https://github.com/gearboxworks/)
-framework.
+This container has been designed to work within the [Gearbox](https://github.com/gearboxworks/) framework.
 However, due to the flexability of Gearbox, it can be used outside of this framework.
-You can either use it directly from DockerHub or GitHub.
+
+There are three methods:
+
+## Method 1: Using gb-launch
+`gb-launch` is a tool specifically designed to interact with a Gearbox Docker container.
+
+It provides three important functional areas, without any Docker container learning curve:
+- Allows control over Gearbox Docker containers: stop, start, create, remove.
+- Build, update, modify and release Docker images.
+- Acts as a proxy for interactive commands within a Gearbox Docker container.
+
+### Setup from GitHub repo
+`gb-launch` is currently in beta testing and is included along with all Gearbox Docker repos.
+Once out of beta, it will be included within the Gearbox installation package.
+
+For now, simply clone this repository to your local machine.
+
+`git clone https://github.com/{{ $.Json.meta.organization }}/docker-{{ .Json.meta.name }}.git`
+
+### Running gb-launch
+There are many ways to call gb-launch, either directly or indirectly.
+Additionally, all host environment variables will be imported into the container seamlessly.
+This allows a devloper to try multiple versions of software as though they were installed locally.
+
+If a container is missing, it will be downloaded and created. Multiple versions can co-exist.
+
+Create, and start the {{ .Json.meta.name }} Gearbox container.
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }}`
+
+Create, and start the {{ .Json.meta.name }} Gearbox container. Run a shell.
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-shell`
+
+{{- $vk := keys .Json.versions }}{{- $pv := index $vk 0 }}
+
+Create, and start the {{ .Json.meta.name }} Gearbox container with version {{ $pv }} and run a shell.
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }}`
+
+If {{ .Json.meta.name }} is symlinked to `gb-launch`, then you can drop the `-gb-name` flag.
+
+`./bin/{{ .Json.meta.name }}`
+
+Running {{ .Json.meta.name }} Gearbox container default command. If a container has a default interactive command, arguments can be supplied without specifying that command.
+
+`./bin/{{ .Json.meta.name }} -flag1 -flag2 variable`
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -flag1 -flag2 variable`
 
 
-## Method 1: GitHub repo
+Running alternate commands within the {{ .Json.meta.name }} Gearbox container.
+
+`./bin/{{ .Json.meta.name }} -- ls -l`
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -- ls -l`
+
+`./bin/{{ .Json.meta.name }} -- ps -eaf`
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -- ps -eaf`
+
+
+
+## Method 2: GitHub repo
 
 ### Setup from GitHub repo
 Simply clone this repository to your local machine
@@ -78,7 +137,7 @@ You can either build your container as above, or use it from DockerHub with thes
 `make test` - Will issue a `stop`, `rm`, `clean`, `build`, `create` and `start` on a Docker container.
 
 
-## Method 2: Docker Hub
+## Method 3: Docker Hub
 
 ### Setup from Docker Hub
 A simple `docker pull gearbox/{{ .Json.meta.name }}` will pull down the latest version.

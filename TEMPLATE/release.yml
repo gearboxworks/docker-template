@@ -31,4 +31,4 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add - <<< "${SSH_KEY}"
         docker login --username gearboxbuild --password "${DOCKERHUB_TOKEN}"
-        make release-${{ matrix.args }}
+        make release-${{ matrix.versions }}
