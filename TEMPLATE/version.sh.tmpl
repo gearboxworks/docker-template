@@ -24,6 +24,7 @@ fi
 ################################################################################
 # Maybe we have rsync, maybe we don't.
 mkdir -p "${GB_VERDIR}"
+mkdir -p "${GB_VERDIR}/logs"
 
 RSYNC="$(which rsync)"
 if [ "${RSYNC}" != "" ]
@@ -57,5 +58,6 @@ done
 
 find ${GB_VERDIR}/rootfs/etc/gearbox/services -type f | xargs chmod 755
 find ${GB_VERDIR}/ -name '*\.sh' | xargs chmod 755
+
 {{ end }}
 # END
