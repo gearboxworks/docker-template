@@ -342,6 +342,10 @@ gb_build() {
 
 		# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
 		LOGFILE="${GB_VERDIR}/logs/build.log"
+		if [ ! -d "${GB_VERDIR}/logs/" ]
+		then
+			mkdir -p "${GB_VERDIR}/logs"
+		fi
 
 		if [ "${GB_REF}" == "base" ]
 		then
@@ -862,6 +866,10 @@ gb_test() {
 
 					# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
 					LOGFILE="${GB_VERDIR}/logs/test.log"
+					if [ ! -d "${GB_VERDIR}/logs/" ]
+					then
+						mkdir -p "${GB_VERDIR}/logs"
+					fi
 
 					#if [ "${GITHUB_ACTIONS}" == "" ]
 					#then
