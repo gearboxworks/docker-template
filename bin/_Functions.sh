@@ -20,7 +20,7 @@ GB_JSONFILE="${GB_BASEDIR}/gearbox.json"
 
 if [ -f "${GB_JSONFILE}" ]
 then
-	GB_VERSIONS="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}{{ $version }} {{ end }}')"
+	GB_VERSIONS="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}{{ if ne $version "" }}{{ $version }}{{ end }} {{ end }}')"
 	GB_VERSIONS="$(echo ${GB_VERSIONS})"	# Easily remove CR
 
 	GB_IMAGENAME="$(${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ .Json.meta.organization }}/{{ .Json.meta.name }}')"
@@ -89,7 +89,7 @@ _getVersions() {
 ################################################################################
 _listVersions() {
 	echo "	all - All versions"
-	${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}\t{{ $version }} - {{ $.Json.meta.organization }}/{{ $.Json.meta.name }}:{{ $version }}\n{{ end }}'
+	${GB_BINFILE} -json ${GB_JSONFILE} -template-string '{{ range $version, $value := .Json.versions }}{{ if ne $version "" }}\t{{ $version }} - {{ $.Json.meta.organization }}/{{ $.Json.meta.name }}:{{ $version }}\n{{ end }}{{ end }}'
 	echo ""
 }
 

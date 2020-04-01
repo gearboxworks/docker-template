@@ -67,8 +67,7 @@ ENV {{ $k | ToUpper }} "{{ $v }}"
 
 # 3. Now copy the local files specific to this container.
 COPY build /etc/gearbox
-COPY ${VERSION}/build /etc/gearbox
-# COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
+COPY versions/${VERSION}/build /etc/gearbox
 
 # 4. Run the base.sh script to set everything up.
 RUN /bin/sh /etc/gearbox/build/base.sh
@@ -139,8 +138,7 @@ ENV {{ $k | ToUpper }} "{{ $v }}"
 
 # 3. Now copy the local files specific to this container.
 COPY build /etc/gearbox
-COPY ${VERSION}/build /etc/gearbox
-# COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
+COPY versions/${VERSION}/build /etc/gearbox
 
 # 4. Run the base.sh script to set everything up.
 RUN /bin/sh /etc/gearbox/build/base.sh
@@ -219,8 +217,7 @@ ENV {{ $k | ToUpper }} "{{ $v }}"
 
 # 5. Now copy the local files specific to this container.
 COPY build /etc/gearbox
-COPY ${VERSION}/build /etc/gearbox
-# COPY ${VERSION}/gearbox.json /etc/gearbox/gearbox.json
+COPY versions/${VERSION}/build /etc/gearbox
 
 # 6. Run the base.sh script to set everything up.
 RUN /bin/sh /etc/gearbox/build/base.sh
