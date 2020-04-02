@@ -53,6 +53,9 @@ It provides three important functional areas, without any Docker container learn
 - Build, update, modify and release Docker images.
 - Acts as a proxy for interactive commands within a Gearbox Docker container.
 
+It also provides a functional SSH daemon for connecting remotely as well as a standard set of common tools and utilities.
+
+
 ### Setup from GitHub repo
 `gb-launch` is currently in beta testing and is included along with all Gearbox Docker repos.
 Once out of beta, it will be included within the Gearbox installation package.
@@ -80,7 +83,7 @@ Create, and start the {{ .Json.meta.name }} Gearbox container. Run a shell.
 
 Create, and start the {{ .Json.meta.name }} Gearbox container with version {{ $pv }} and run a shell.
 
-`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }}`
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -gb-shell`
 
 If {{ .Json.meta.name }} is symlinked to `gb-launch`, then you can drop the `-gb-name` flag.
 
@@ -95,14 +98,19 @@ Running {{ .Json.meta.name }} Gearbox container default command. If a container 
 
 Running alternate commands within the {{ .Json.meta.name }} Gearbox container.
 
-`./bin/{{ .Json.meta.name }} -- ls -l`
+`./bin/{{ .Json.meta.name }} -gb-shell -- ls -l`
 
-`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -- ls -l`
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -gb-shell -- ls -l`
 
-`./bin/{{ .Json.meta.name }} -- ps -eaf`
+`./bin/{{ .Json.meta.name }} -gb-shell -- ps -eaf`
 
-`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -- ps -eaf`
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-version {{ $pv }} -gb-shell -- ps -eaf`
 
+
+ssh - All [Gearbox](https://github.com/gearboxworks/) containers have a running SSH daemon. So you can connect remotely.
+To show what ports are exported to the host.
+
+`./bin/gb-launch -gb-name {{ .Json.meta.name }} -gb-list`
 
 
 ## Method 2: GitHub repo
@@ -169,6 +177,9 @@ shell - Run a shell, (/bin/bash), within a Docker container.
 
 ### SSH
 ssh - All [Gearbox](https://github.com/gearboxworks/) containers have a running SSH daemon. So you can connect remotely.
+
+Either use `gb-launch` above or discover the port and SSH directly.
+
 
 ```
 SSH_PORT="$(docker port {{ .Json.meta.name }}-latest 22/tcp | sed 's/0.0.0.0://')"
