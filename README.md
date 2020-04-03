@@ -1,4 +1,4 @@
-![Gearbox](https://raw.githubusercontent.com/gearboxworks/gearboxworks.github.io/master/assets/images/gearbox-logo.png)
+![Gearbox](https://gearboxworks.github.io/assets/images/gearbox-logo.png)
 
 
 # [Gearbox](https://github.com/gearboxworks/) Docker container template
