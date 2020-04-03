@@ -12,8 +12,6 @@ GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxw
 
 GitHub release(latest): ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-template) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-template?sort=semver)
 
-All supported Docker containers: [here](https://github.com/gearboxworks/docker-template/tree/master/gears)
-
 All supported Docker containers: [here](gears/)
 
 
@@ -26,7 +24,7 @@ Open a terminal window and fetch using wget.
 
 `wget https://github.com/gearboxworks/docker-template/raw/master/bin/BootStrap.sh`
 
-Or download [from here](https://github.com/gearboxworks/docker-template/raw/master/bin/BootStrap.sh)
+Or download [from here](bin/BootStrap.sh)
 
 ### 2 Run BootStrap.sh script.
 `bash ./BootStrap.sh` - Let the script prompt you:
