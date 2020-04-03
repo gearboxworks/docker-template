@@ -1,4 +1,5 @@
-![Gearbox](https://github.com/gearboxworks/gearbox.github.io/raw/master/Gearbox-100x.png)
+![Gearbox](https://raw.githubusercontent.com/gearboxworks/gearboxworks.github.io/master/assets/images/gearbox-logo.png)
+
 
 # [Gearbox](https://github.com/gearboxworks/) Docker container template
 This is the main template repository for creating Docker containers for [Gearbox](https://github.com/gearboxworks/).
@@ -10,6 +11,8 @@ Use it to create a Gearbox container from scratch or wrap an already existing co
 GitHub commit: ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-template?style=flat-square)
 
 GitHub release(latest): ![last-release-date](https://img.shields.io/github/release-date/gearboxworks/docker-template) ![last-release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-template?sort=semver)
+
+All supported Docker containers: [here]()
 
 
 * * *
