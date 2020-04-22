@@ -674,7 +674,7 @@ gb_rm() {
 #				p_err "${GB_CONTAINERVERSION}" "Unknown state."
 #				return 1
 #				;;
-		esac
+#		esac
 	done
 
 	return 0
