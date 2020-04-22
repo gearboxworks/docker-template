@@ -488,7 +488,7 @@ gb_list() {
 		return 1
 	fi
 
-	${LAUNCHBIN} list ${GB_NAME}
+	${LAUNCHBIN} list "${GB_NAME}:${GB_VERSION}"
 
 #	p_ok "${FUNCNAME[0]}" "#### Listing images for ${GB_IMAGENAME}"
 #	docker image ls "${GB_IMAGENAME}:*"
@@ -655,7 +655,7 @@ gb_rm() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} uninstall ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} uninstall "${GB_NAME}:${GB_VERSION}"
 
 #		gb_checkContainer ${GB_CONTAINERVERSION}
 #		case ${STATE} in
@@ -693,7 +693,7 @@ gb_shell() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} shell ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} shell "${GB_NAME}:${GB_VERSION}"
 
 #		gb_checkContainer ${GB_CONTAINERVERSION}
 #		case ${STATE} in
@@ -795,7 +795,7 @@ gb_start() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
 
 #		p_info "${GB_CONTAINERVERSION}" "Checking network."
 #		gb_checknetwork
@@ -820,7 +820,7 @@ gb_stop() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
 
 #		p_info "${GB_CONTAINERVERSION}" "Stopping container."
 #		docker stop ${GB_CONTAINERVERSION}
@@ -843,7 +843,7 @@ gb_test() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
 
 #		gb_checkContainer ${GB_CONTAINERVERSION}
 #		case ${STATE} in
