@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CONTAINER="$(basename $0)"
+NAME="$(basename $0)"
 DIR="$(dirname $0)"
-EXEC="${DIR}/$(uname -s)/$0"
+EXEC="${DIR}/$(uname -s)/${NAME}"
 if [ ! -x "${EXEC}" ]
 then
 	echo "Gearbox: Architecture not supported, ${EXEC}."
