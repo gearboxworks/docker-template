@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WARNING: This file is SOURCED. Don't add in any "exit", otherwise your shell will exit.
-export ARCH GB_BINFILE GB_BINDIR GB_BASEDIR GB_JSONFILE GB_VERSIONS GB_VERSION GITBIN GB_GITURL GB_GITREPO
+export ARCH GB_BINFILE GB_ARCHDIR GB_BINDIR GB_BASEDIR GB_JSONFILE GB_VERSIONS GB_VERSION GITBIN GB_GITURL GB_GITREPO
 
 ARCH="$(uname -s)"
 case ${ARCH} in
@@ -13,10 +13,13 @@ case ${ARCH} in
 		;;
 esac
 
-GB_BINFILE="$(./bin/JsonToConfig -json-string '{}' -template-string '{{ .ExecName }}')"
-GB_BINDIR="$(./bin/JsonToConfig -json-string '{}' -template-string '{{ .DirPath }}')"
+GB_BINFILE="$(./bin/${ARCH}/JsonToConfig -json-string '{}' -template-string '{{ .ExecName }}')"
+GB_ARCHDIR="$(./bin/${ARCH}/JsonToConfig -json-string '{}' -template-string '{{ .DirPath }}')"
+GB_BINDIR="$(dirname "$GB_ARCHDIR")"
 GB_BASEDIR="$(dirname "$GB_BINDIR")"
 GB_JSONFILE="${GB_BASEDIR}/gearbox.json"
+
+LAUNCHBIN="${GB_BINDIR}/${ARCH}/launch"
 
 if [ -f "${GB_JSONFILE}" ]
 then
@@ -485,11 +488,13 @@ gb_list() {
 		return 1
 	fi
 
-	p_ok "${FUNCNAME[0]}" "#### Listing images for ${GB_IMAGENAME}"
-	docker image ls "${GB_IMAGENAME}:*"
+	${LAUNCHBIN} list ${GB_NAME}
 
-	p_ok "${FUNCNAME[0]}" "#### Listing containers for ${GB_NAME}"
-	docker container ls -a -s -f name="^${GB_NAME}-"
+#	p_ok "${FUNCNAME[0]}" "#### Listing images for ${GB_IMAGENAME}"
+#	docker image ls "${GB_IMAGENAME}:*"
+#
+#	p_ok "${FUNCNAME[0]}" "#### Listing containers for ${GB_NAME}"
+#	docker container ls -a -s -f name="^${GB_NAME}-"
 
 	return 0
 }
@@ -650,23 +655,25 @@ gb_rm() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and running)."
-				docker container rm -f ${GB_CONTAINERVERSION}
-				;;
-			'STOPPED')
-				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and shutdown)."
-				docker container rm -f ${GB_CONTAINERVERSION}
-				;;
-			'MISSING')
-				p_warn "${GB_CONTAINERVERSION}" "Container already removed."
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
-				;;
+		${LAUNCHBIN} uninstall ${GB_CONTAINERVERSION}
+
+#		gb_checkContainer ${GB_CONTAINERVERSION}
+#		case ${STATE} in
+#			'STARTED')
+#				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and running)."
+#				docker container rm -f ${GB_CONTAINERVERSION}
+#				;;
+#			'STOPPED')
+#				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and shutdown)."
+#				docker container rm -f ${GB_CONTAINERVERSION}
+#				;;
+#			'MISSING')
+#				p_warn "${GB_CONTAINERVERSION}" "Container already removed."
+#				;;
+#			*)
+#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+#				return 1
+#				;;
 		esac
 	done
 
@@ -686,34 +693,36 @@ gb_shell() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				;;
-			'STOPPED')
-				gb_start ${GB_VERSION}
-				;;
-			'MISSING')
-				gb_create ${GB_VERSION}
-				gb_start ${GB_VERSION}
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
-				;;
-		esac
+		${LAUNCHBIN} shell ${GB_CONTAINERVERSION}
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				p_info "${GB_CONTAINERVERSION}" "Entering container."
-				docker exec -i -t ${GB_CONTAINERVERSION} /bin/bash -l
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
-				;;
-		esac
+#		gb_checkContainer ${GB_CONTAINERVERSION}
+#		case ${STATE} in
+#			'STARTED')
+#				;;
+#			'STOPPED')
+#				gb_start ${GB_VERSION}
+#				;;
+#			'MISSING')
+#				gb_create ${GB_VERSION}
+#				gb_start ${GB_VERSION}
+#				;;
+#			*)
+#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+#				return 1
+#				;;
+#		esac
+#	
+#		gb_checkContainer ${GB_CONTAINERVERSION}
+#		case ${STATE} in
+#			'STARTED')
+#				p_info "${GB_CONTAINERVERSION}" "Entering container."
+#				docker exec -i -t ${GB_CONTAINERVERSION} /bin/bash -l
+#				;;
+#			*)
+#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+#				return 1
+#				;;
+#		esac
 	done
 
 	return 0
@@ -786,11 +795,13 @@ gb_start() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		p_info "${GB_CONTAINERVERSION}" "Checking network."
-		gb_checknetwork
+		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
 
-		p_info "${GB_CONTAINERVERSION}" "Starting container."
-		docker start ${GB_CONTAINERVERSION}
+#		p_info "${GB_CONTAINERVERSION}" "Checking network."
+#		gb_checknetwork
+#
+#		p_info "${GB_CONTAINERVERSION}" "Starting container."
+#		docker start ${GB_CONTAINERVERSION}
 	done
 
 	return 0
@@ -809,8 +820,10 @@ gb_stop() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		p_info "${GB_CONTAINERVERSION}" "Stopping container."
-		docker stop ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
+
+#		p_info "${GB_CONTAINERVERSION}" "Stopping container."
+#		docker stop ${GB_CONTAINERVERSION}
 	done
 
 	return 0
@@ -830,22 +843,24 @@ gb_test() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				;;
-			'STOPPED')
-				gb_start ${GB_VERSION}
-				;;
-			'MISSING')
-				gb_create ${GB_VERSION}
-				gb_start ${GB_VERSION}
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
-				;;
-		esac
+		${LAUNCHBIN} start ${GB_CONTAINERVERSION}
+
+#		gb_checkContainer ${GB_CONTAINERVERSION}
+#		case ${STATE} in
+#			'STARTED')
+#				;;
+#			'STOPPED')
+#				gb_start ${GB_VERSION}
+#				;;
+#			'MISSING')
+#				gb_create ${GB_VERSION}
+#				gb_start ${GB_VERSION}
+#				;;
+#			*)
+#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
+#				return 1
+#				;;
+#		esac
 
 
 		for RETRY in 1 2 3 4 5 6 7 8
