@@ -843,7 +843,12 @@ gb_test() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} test "${GB_NAME}:${GB_VERSION}"
+
+		if [ "$?" != "0" ]
+		then
+			FAILED_ALL="Y"
+		fi
 
 #		gb_checkContainer ${GB_CONTAINERVERSION}
 #		case ${STATE} in
@@ -861,57 +866,57 @@ gb_test() {
 #				return 1
 #				;;
 #		esac
-
-
-		for RETRY in 1 2 3 4 5 6 7 8
-		do
-			sleep 1
-			FAILED=""
-
-			gb_checkContainer ${GB_CONTAINERVERSION}
-			case ${STATE} in
-				'STARTED')
-					SSHPASS="$(which sshpass)"
-					if [ "${SSHPASS}" != "" ]
-					then
-						SSHPASS="${SSHPASS} -pbox"
-					fi
-
-					p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
-					PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
-
-					# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
-					LOGFILE="${GB_VERDIR}/logs/test.log"
-					if [ ! -d "${GB_VERDIR}/logs/" ]
-					then
-						mkdir -p "${GB_VERDIR}/logs"
-					fi
-
-					#if [ "${GITHUB_ACTIONS}" == "" ]
-					#then
-					#	script ${LOG_ARGS} ${LOGFILE}
-					#fi
-
-					if ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost /etc/gearbox/unit-tests/run.sh 2>&1 | tee ${LOGFILE}
-					then
-						FAILED=""
-						break
-					else
-						FAILED="Y"
-						p_warn "${GB_CONTAINERVERSION}" "SSH failed - Retry count ${RETRY}."
-					fi
-					;;
-				*)
-					p_err "${GB_CONTAINERVERSION}" "Unknown state."
-					FAILED="Y"
-					;;
-			esac
-		done
-
-		if [ "${FAILED}" != "" ]
-		then
-			FAILED_ALL="Y"
-		fi
+#
+#
+#		for RETRY in 1 2 3 4 5 6 7 8
+#		do
+#			sleep 1
+#			FAILED=""
+#
+#			gb_checkContainer ${GB_CONTAINERVERSION}
+#			case ${STATE} in
+#				'STARTED')
+#					SSHPASS="$(which sshpass)"
+#					if [ "${SSHPASS}" != "" ]
+#					then
+#						SSHPASS="${SSHPASS} -pbox"
+#					fi
+#
+#					p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
+#					PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
+#
+#					# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
+#					LOGFILE="${GB_VERDIR}/logs/test.log"
+#					if [ ! -d "${GB_VERDIR}/logs/" ]
+#					then
+#						mkdir -p "${GB_VERDIR}/logs"
+#					fi
+#
+#					#if [ "${GITHUB_ACTIONS}" == "" ]
+#					#then
+#					#	script ${LOG_ARGS} ${LOGFILE}
+#					#fi
+#
+#					if ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost /etc/gearbox/unit-tests/run.sh 2>&1 | tee ${LOGFILE}
+#					then
+#						FAILED=""
+#						break
+#					else
+#						FAILED="Y"
+#						p_warn "${GB_CONTAINERVERSION}" "SSH failed - Retry count ${RETRY}."
+#					fi
+#					;;
+#				*)
+#					p_err "${GB_CONTAINERVERSION}" "Unknown state."
+#					FAILED="Y"
+#					;;
+#			esac
+#		done
+#
+#		if [ "${FAILED}" != "" ]
+#		then
+#			FAILED_ALL="Y"
+#		fi
 	done
 
 	if [ "${FAILED_ALL}" == "" ]
