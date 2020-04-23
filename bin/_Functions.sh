@@ -489,14 +489,8 @@ gb_list() {
 	fi
 
 	${LAUNCHBIN} list "${GB_NAME}:${GB_VERSION}"
-
-#	p_ok "${FUNCNAME[0]}" "#### Listing images for ${GB_IMAGENAME}"
-#	docker image ls "${GB_IMAGENAME}:*"
-#
-#	p_ok "${FUNCNAME[0]}" "#### Listing containers for ${GB_NAME}"
-#	docker container ls -a -s -f name="^${GB_NAME}-"
-
-	return 0
+	RETURN="$?"
+	return ${RETURN}
 }
 
 
@@ -656,25 +650,6 @@ gb_rm() {
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} uninstall "${GB_NAME}:${GB_VERSION}"
-
-#		gb_checkContainer ${GB_CONTAINERVERSION}
-#		case ${STATE} in
-#			'STARTED')
-#				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and running)."
-#				docker container rm -f ${GB_CONTAINERVERSION}
-#				;;
-#			'STOPPED')
-#				p_info "${GB_CONTAINERVERSION}" "Removing container, (present and shutdown)."
-#				docker container rm -f ${GB_CONTAINERVERSION}
-#				;;
-#			'MISSING')
-#				p_warn "${GB_CONTAINERVERSION}" "Container already removed."
-#				;;
-#			*)
-#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-#				return 1
-#				;;
-#		esac
 	done
 
 	return 0
@@ -694,35 +669,6 @@ gb_shell() {
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} shell "${GB_NAME}:${GB_VERSION}"
-
-#		gb_checkContainer ${GB_CONTAINERVERSION}
-#		case ${STATE} in
-#			'STARTED')
-#				;;
-#			'STOPPED')
-#				gb_start ${GB_VERSION}
-#				;;
-#			'MISSING')
-#				gb_create ${GB_VERSION}
-#				gb_start ${GB_VERSION}
-#				;;
-#			*)
-#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-#				return 1
-#				;;
-#		esac
-#	
-#		gb_checkContainer ${GB_CONTAINERVERSION}
-#		case ${STATE} in
-#			'STARTED')
-#				p_info "${GB_CONTAINERVERSION}" "Entering container."
-#				docker exec -i -t ${GB_CONTAINERVERSION} /bin/bash -l
-#				;;
-#			*)
-#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-#				return 1
-#				;;
-#		esac
 	done
 
 	return 0
@@ -730,47 +676,24 @@ gb_shell() {
 
 
 ################################################################################
-gb_ssh() {
+gb_bash() {
 	if _getVersions $@
 	then
 		return 1
 	fi
-	p_ok "${FUNCNAME[0]}" "#### Running SSH for versions: ${GB_VERSIONS}"
+	p_ok "${FUNCNAME[0]}" "#### Running shell for versions: ${GB_VERSIONS}"
 
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
-		gb_checkContainer ${GB_CONTAINERVERSION}
-		case ${STATE} in
-			'STARTED')
-				;;
-			'STOPPED')
-				gb_start ${GB_VERSION}
-				;;
-			'MISSING')
-				gb_create ${GB_VERSION}
-				gb_start ${GB_VERSION}
-				;;
-			*)
-				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
-				;;
-		esac
+		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
 
 		gb_checkContainer ${GB_CONTAINERVERSION}
 		case ${STATE} in
 			'STARTED')
-				SSHPASS="$(which sshpass)"
-				if [ "${SSHPASS}" != "" ]
-				then
-					SSHPASS="${SSHPASS} -pbox"
-				fi
-
-				p_info "${GB_CONTAINERVERSION}" "SSH into container."
-				PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
-
-				${SSHPASS} ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost
+				p_info "${GB_CONTAINERVERSION}" "Entering container."
+				docker exec -i -t ${GB_CONTAINERVERSION} /bin/bash -l
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
@@ -796,12 +719,6 @@ gb_start() {
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
-
-#		p_info "${GB_CONTAINERVERSION}" "Checking network."
-#		gb_checknetwork
-#
-#		p_info "${GB_CONTAINERVERSION}" "Starting container."
-#		docker start ${GB_CONTAINERVERSION}
 	done
 
 	return 0
@@ -820,10 +737,7 @@ gb_stop() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
-
-#		p_info "${GB_CONTAINERVERSION}" "Stopping container."
-#		docker stop ${GB_CONTAINERVERSION}
+		${LAUNCHBIN} stop "${GB_NAME}:${GB_VERSION}"
 	done
 
 	return 0
@@ -849,74 +763,6 @@ gb_test() {
 		then
 			FAILED_ALL="Y"
 		fi
-
-#		gb_checkContainer ${GB_CONTAINERVERSION}
-#		case ${STATE} in
-#			'STARTED')
-#				;;
-#			'STOPPED')
-#				gb_start ${GB_VERSION}
-#				;;
-#			'MISSING')
-#				gb_create ${GB_VERSION}
-#				gb_start ${GB_VERSION}
-#				;;
-#			*)
-#				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-#				return 1
-#				;;
-#		esac
-#
-#
-#		for RETRY in 1 2 3 4 5 6 7 8
-#		do
-#			sleep 1
-#			FAILED=""
-#
-#			gb_checkContainer ${GB_CONTAINERVERSION}
-#			case ${STATE} in
-#				'STARTED')
-#					SSHPASS="$(which sshpass)"
-#					if [ "${SSHPASS}" != "" ]
-#					then
-#						SSHPASS="${SSHPASS} -pbox"
-#					fi
-#
-#					p_info "${GB_CONTAINERVERSION}" "Running unit-tests."
-#					PORT="$(docker port ${GB_CONTAINERVERSION} 22/tcp | sed 's/0.0.0.0://')"
-#
-#					# LOGFILE="${GB_VERDIR}/logs/$(date +'%Y%m%d-%H%M%S').log"
-#					LOGFILE="${GB_VERDIR}/logs/test.log"
-#					if [ ! -d "${GB_VERDIR}/logs/" ]
-#					then
-#						mkdir -p "${GB_VERDIR}/logs"
-#					fi
-#
-#					#if [ "${GITHUB_ACTIONS}" == "" ]
-#					#then
-#					#	script ${LOG_ARGS} ${LOGFILE}
-#					#fi
-#
-#					if ssh -p ${PORT} -o StrictHostKeyChecking=no gearbox@localhost /etc/gearbox/unit-tests/run.sh 2>&1 | tee ${LOGFILE}
-#					then
-#						FAILED=""
-#						break
-#					else
-#						FAILED="Y"
-#						p_warn "${GB_CONTAINERVERSION}" "SSH failed - Retry count ${RETRY}."
-#					fi
-#					;;
-#				*)
-#					p_err "${GB_CONTAINERVERSION}" "Unknown state."
-#					FAILED="Y"
-#					;;
-#			esac
-#		done
-#
-#		if [ "${FAILED}" != "" ]
-#		then
-#			FAILED_ALL="Y"
-#		fi
 	done
 
 	if [ "${FAILED_ALL}" == "" ]
