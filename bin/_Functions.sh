@@ -228,7 +228,6 @@ gb_create-version() {
 	do
 		gb_getenv ${GB_VERSION}
 
-
 		if [ -d ${GB_VERDIR} ]
 		then
 			p_info "${FUNCNAME[0]}" "Updating version directory \"${GB_VERSION}\"."
@@ -258,7 +257,7 @@ gb_clean() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Cleaning up for versions: ${GB_VERSIONS}"
 
-
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -283,7 +282,8 @@ gb_clean() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
+				EXIT="1"
+				continue
 				;;
 		esac
 
@@ -324,7 +324,7 @@ gb_clean() {
 		esac
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -336,7 +336,7 @@ gb_build() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Building image for versions: ${GB_VERSIONS}"
 
-
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -388,7 +388,7 @@ gb_build() {
 		fi
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -400,6 +400,7 @@ gb_create() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Creating container for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -418,12 +419,13 @@ gb_create() {
 				;;
 			*)
 				p_err "${GB_IMAGEVERSION}" "Unknown state."
-				return 1
+				EXIT="1"
+				continue
 				;;
 		esac
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -435,6 +437,7 @@ gb_info() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Image and container info for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -450,7 +453,7 @@ gb_info() {
 		docker container ls -f name="^${GB_CONTAINERVERSION}"
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -462,6 +465,7 @@ gb_inspect() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Inspecting image and container for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -477,7 +481,7 @@ gb_inspect() {
 		docker container inspect name="^${GB_CONTAINERVERSION}" 2>&1
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -502,6 +506,7 @@ gb_logs() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Showing build logs for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -515,7 +520,7 @@ gb_logs() {
 		fi
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -527,6 +532,7 @@ gb_ports() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Showing ports for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -545,12 +551,13 @@ gb_ports() {
 				;;
 			*)
 				p_err "${GB_CONTAINERVERSION}" "Unknown state."
-				return 1
+				EXIT="1"
+				continue
 				;;
 		esac
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -562,6 +569,7 @@ gb_dockerhub() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Pushing to DockerHub for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
@@ -578,7 +586,7 @@ gb_dockerhub() {
 		fi
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -625,6 +633,7 @@ gb_release() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Releasing for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_clean ${GB_VERSION} && \
@@ -645,11 +654,17 @@ gb_rm() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Removing container for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} uninstall "${GB_NAME}:${GB_VERSION}"
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
 	done
 
 	return 0
@@ -664,11 +679,17 @@ gb_shell() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Running shell for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} shell "${GB_NAME}:${GB_VERSION}"
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
 	done
 
 	return 0
@@ -683,11 +704,13 @@ gb_bash() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Running shell for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
+		RETURN="$?"
 
 		gb_checkContainer ${GB_CONTAINERVERSION}
 		case ${STATE} in
@@ -714,14 +737,20 @@ gb_start() {
 	fi
 	p_ok "${FUNCNAME[0]}" "#### Starting container for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -733,14 +762,20 @@ gb_stop() {
 	fi
 	p_ok "${FUNCNAME[0]}" "Stopping container for versions: ${GB_VERSIONS}"
 
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} stop "${GB_NAME}:${GB_VERSION}"
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
 	done
 
-	return 0
+	return ${EXIT}
 }
 
 
@@ -752,26 +787,24 @@ gb_test() {
 	fi
 	p_ok "${FUNCNAME[0]}" "Testing container for versions: ${GB_VERSIONS}"
 
-	ALL_FAILED=""
+	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
 		gb_getenv ${GB_VERSION}
 
 		${LAUNCHBIN} test "${GB_NAME}:${GB_VERSION}"
-
-		if [ "$?" != "0" ]
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
 		then
-			FAILED_ALL="Y"
+			EXIT="1"
 		fi
 	done
 
-	if [ "${FAILED_ALL}" == "" ]
+	if [ "${EXIT}" != "0" ]
 	then
-		return 0
-	else
 		p_err "${FUNCNAME[0]}" "Testing FAILED for versions: ${GB_VERSIONS}"
-		return 1
 	fi
+	return ${EXIT}
 }
 
 
