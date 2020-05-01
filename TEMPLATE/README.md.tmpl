@@ -108,7 +108,7 @@ Gearbox containers may have multiple executables that can be run. The {{ .Json.m
 
 {{- range $key, $value := .Json.run.commands }}
 {{- if eq $key "default" }}
-- Is the default command and will execute `{{ $value }}` within the container.
+- The default command will execute `{{ $value }}` within the container.
 {{- else }}
 - `{{ $key }}` - will execute `{{ $value }}` within the container.
 {{- end }}
