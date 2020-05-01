@@ -87,8 +87,14 @@ Create, and start the {{ .Json.meta.name }} Gearbox container with version {{ $p
 
 `./launch shell {{ .Json.meta.name }}:{{ $pv }}`
 
-If {{ .Json.meta.name }} is symlinked to `launch`, then the Gearbox container will be determined automatically.
-Symlinks will be created upon installation.
+`./launch shell {{ .Json.meta.name }}:{{ $pv }} ls -l`
+
+`./launch shell {{ .Json.meta.name }}:{{ $pv }} ps -eaf`
+
+
+### Available commands
+If {{ .Json.meta.name }} is symlinked to `launch`, then the Gearbox container will be determined automatically and the default command will be run.
+All available commands for a Gearbox container will be automatically symlinked upon installation.
 
 `./{{ .Json.meta.name }}`
 
@@ -98,16 +104,20 @@ Running {{ .Json.meta.name }} Gearbox container default command. If a container 
 
 `./launch {{ .Json.meta.name }}:{{ $pv }} -flag1 -flag2 variable`
 
+Gearbox containers may have multiple executables that can be run. The {{ .Json.meta.name }} Gearbox container has the following available commands:
 
-Running alternate commands within the {{ .Json.meta.name }} Gearbox container.
+{{- range $key, $value := .Json.run.commands }}
+{{- if eq $key "default" }}
+- Is the default command and will execute `{{ $value }}` within the container.
+{{- else }}
+- `{{ $key }}` - will execute `{{ $value }}` within the container.
+{{- end }}
+{{- end }}
 
-`./launch shell {{ .Json.meta.name }}:{{ $pv }} ls -l`
 
-`./launch shell {{ .Json.meta.name }}:{{ $pv }} ps -eaf`
-
-
+### Remote connection
 ssh - All [Gearbox](https://github.com/gearboxworks/) containers have a running SSH daemon. So you can connect remotely.
-To show what ports are exported to the host.
+To show what ports are exported to the host, use the following command.
 
 `./launch list {{ .Json.meta.name }}`
 
