@@ -639,6 +639,8 @@ gb_release() {
 	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
+		p_ok "${FUNCNAME[0]}" "#### Build and release version ${GB_VERSIONS}"
+
 		gb_clean ${GB_VERSION} && \
 		gb_build ${GB_VERSION} && \
 		gb_test ${GB_VERSION} && \
