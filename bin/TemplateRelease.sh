@@ -94,15 +94,10 @@ else
 	GB_GITREPO="$(basename -s .git ${GB_GITURL})"; export GB_GITREPO
 fi
 
-#if [ "${GB_GITREPO}" != "docker-template" ]
-#then
-#	echo "################################### WARNING ###################################"
-#	echo "# This command can only be run from the docker-template GitHub repository."
-#	echo "# Only gearboxworks staff use this command to update the docker-template repo."
-#	echo "# Check out the README file on how to use this repo."
-#	echo "################################### WARNING ###################################"
-#	exit 1
-#fi
+if [ "${GB_GITREPO}" != "docker-template" ]
+then
+	./bin/TemplateUpdate.sh
+fi
 
 
 ################################################################################
