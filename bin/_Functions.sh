@@ -639,13 +639,28 @@ gb_release() {
 	EXIT="0"
 	for GB_VERSION in ${GB_VERSIONS}
 	do
-		p_ok "${FUNCNAME[0]}" "#### Build and release version ${GB_VERSIONS}"
+		p_ok "${FUNCNAME[0]}" "#### Build and release version ${GB_VERSION}"
 
-		gb_clean ${GB_VERSION} && \
-		gb_build ${GB_VERSION} && \
-		gb_test ${GB_VERSION} && \
+		gb_clean ${GB_VERSION}
+
+		gb_build ${GB_VERSION}
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
+
+		# Just after a build, the image won't be visible for a short while.
+		sleep 2
+
+		gb_test ${GB_VERSION}
+		RETURN="$?"
+		if [ "${RETURN}" != "0" ]
+		then
+			EXIT="1"
+		fi
+
 		gb_dockerhub ${GB_VERSION}
-
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then

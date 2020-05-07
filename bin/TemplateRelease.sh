@@ -179,7 +179,7 @@ echo "# Gearbox[${GB_GITREPO}]: Creating release ${VERSION} on GitHub."
 echo "# Gearbox[${GB_GITREPO}]: Description: \"${DESCRIPTION}.\""
 
 echo "# Gearbox[${GB_GITREPO}]: Pushing repo to GitHub."
-git commit -a -m "${DESCRIPTION}" && git push
+git add . && git commit -a -m "${DESCRIPTION}" && git push
 
 export RETURN
 case "${CMD}" in
