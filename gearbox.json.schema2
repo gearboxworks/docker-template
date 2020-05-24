@@ -5,6 +5,14 @@
 		"organization": "gearboxworks",
 		"name": "example",
 		"label": "Example Container",
+		"info": "A short description of an example container.",
+		"description": [
+			"This is a longer description of an example container.",
+			"CR/LF will be stripped out of these comments...",
+			"... and every line will have a CR appended.",
+			"",
+			""
+		],
 		"maintainer": "Gearbox Team <team@gearbox.works>",
 		"class": "system",
 		"refurl": "https://example.org/"
@@ -24,6 +32,11 @@
 		"restart": "--restart no"
 	},
 	"run": {
+		"commands": {
+			"default": "/usr/bin/example",
+			"example": "/usr/bin/example",
+			"foo": "/usr/bin/foo"
+		}
 	},
 	"project": {
 	},
