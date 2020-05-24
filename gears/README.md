@@ -68,7 +68,7 @@ The following represents the status of all auto-release builds for Gearbox docke
 | [php](https://github.com/gearboxworks/docker-php/) | ![commit-date](https://img.shields.io/github/last-commit/gearboxworks/docker-php?style=flat-square) | ![release-date](https://img.shields.io/github/release-date/gearboxworks/docker-php) | ![release-date](https://img.shields.io/github/v/tag/gearboxworks/docker-php?sort=semver) | [![release-state](https://github.com/gearboxworks/docker-php/workflows/release/badge.svg)](https://github.com/gearboxworks/docker-php/actions?query=workflow%3Arelease) | ![docker-latest](https://img.shields.io/docker/v/gearboxworks/php?sort=semver) |
 
 
-## Graphics applications containers
+## Graphics application containers
 
 | Repository | Last Commit | Release Date | Repo Release Version | Release State | Docker Latest |
 | ---------- | ----------- | ------------ | -------------------- | ------------- | ------------- |
