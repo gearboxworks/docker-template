@@ -268,8 +268,7 @@ The **{{ .Json.meta.name }}** {{ $Gearbox }} container has the following **{{ le
 | Host Executable Name | {{ $Gearbox }} Container Executable Name |
 | -------------------- | ---------------------------------------- |
 {{- range $key, $value := .Json.run.commands }}
-{{- if eq $key "default" }} (default command){{ end }}
-| {{ $key }} | {{ $value }} |
+| {{- if eq $key "default" }}(default command){{ else }}{{ $key }}{{ end }} | {{ $value }} |
 {{- end }}
 {{- end }}
 
