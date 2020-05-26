@@ -14,6 +14,8 @@ GitHub release(latest): ![last-release-date](https://img.shields.io/github/relea
 
 All supported Docker containers: [here](gears/)
 
+[![GoDoc Badge][]][GoDoc]
+
 
 * * *
 
@@ -186,4 +188,3 @@ if [version] isn't specified, then...
 - Prompt the user for a new version.
 - Do nothing.
 ```
-
