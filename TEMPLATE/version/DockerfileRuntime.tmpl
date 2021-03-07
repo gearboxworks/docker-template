@@ -39,6 +39,9 @@ ENV GEARBOX_VERSION "{{ .Env.GB_VERSION }}"
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
 # SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
 ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
@@ -49,6 +52,10 @@ ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 	{{- if eq $k "versions" }}
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
+# SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
 # SKIP {{ $k }}
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
@@ -77,7 +84,7 @@ RUN /bin/sh /etc/gearbox/build/{{ .Json.meta.name }}.sh
 
 # 6. Expose ports.
 EXPOSE 22 9970 {{ range .Json.build.ports }}{{ . }} {{ end }}
-WORKDIR /home/gearbox/projects
+WORKDIR {{ with .Json.build.workdir }}{{ . }}{{ else }}/home/gearbox/projects{{ end }}
 
 # END
 ################################################################################
@@ -110,6 +117,10 @@ ENV GEARBOX_BASE_REF "{{ $version.ref }}"
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
 # SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
+# SKIP {{ $k }}
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
 ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
@@ -120,6 +131,10 @@ ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 	{{- if eq $k "versions" }}
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
+# SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
 # SKIP {{ $k }}
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
@@ -145,7 +160,7 @@ RUN /bin/sh /etc/gearbox/build/base.sh
 
 # 6. Expose ports.
 EXPOSE {{ range .Json.build.ports }}{{ . }} {{ end }}
-WORKDIR /home/gearbox/projects
+WORKDIR {{ with .Json.build.workdir }}{{ . }}{{ else }}/home/gearbox/projects{{ end }}
 USER root
 
 # 7. Run S6 init.
@@ -189,6 +204,10 @@ ENV GEARBOX_VERSION "{{ .Env.GB_VERSION }}"
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
 # SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
+# SKIP {{ $k }}
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
 ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
@@ -199,6 +218,10 @@ ENV GEARBOX_{{ $k | ToUpper }} "{{ $v }}"
 	{{- if eq $k "versions" }}
 # SKIP {{ $k }}
 	{{- else if eq $k "env" }}
+# SKIP {{ $k }}
+	{{- else if isArray $v }}
+LABEL container.{{ $k }}="{{ join $v " " }}"
+ENV GEARBOX_{{ $k | ToUpper }} "{{ join $v " " }}"
 # SKIP {{ $k }}
 	{{- else }}
 LABEL container.{{ $k }}="{{ $v }}"
@@ -227,8 +250,16 @@ RUN /bin/sh /etc/gearbox/build/{{ .Json.meta.name }}.sh
 
 # 8. Expose ports.
 EXPOSE 22 9970 {{ range .Json.build.ports }}{{ . }} {{ end }}
-WORKDIR /home/gearbox/projects
+WORKDIR {{ with .Json.build.workdir }}{{ . }}{{ else }}/home/gearbox/projects{{ end }}
 {{ with .Json.build.inner }}{{ . }}{{ end }}
+
+# 9. Run S6 init.
+{{- if .Env.GEARBOX_ENTRYPOINT }}
+{{- if ne .Env.GEARBOX_ENTRYPOINT "" }}
+# ENTRYPOINT ["{{ with .Env.GEARBOX_ENTRYPOINT }}{{ . }}{{ end }}", "{{ with .Env.GEARBOX_ENTRYPOINT_ARGS }}{{ . }}{{ end }}"]
+{{- end }}
+{{- end }}
+ENTRYPOINT []
 CMD ["/init"]
 
 # END

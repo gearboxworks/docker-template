@@ -9,7 +9,7 @@ cd /home/gearbox/projects/default
 GBEP="$(which ${GEARBOX_ENTRYPOINT})"
 if [ "${GBEP}" != "" ]
 then
-	${GEARBOX_ENTRYPOINT_ARGS} ${GEARBOX_ARGS}
+	${GEARBOX_ENTRYPOINT} ${GEARBOX_ENTRYPOINT_ARGS}
 else
 	# Add your service entry here, if no entrypoint defined in the ref container.
 	GBRUN="$(which ${GEARBOX_RUN})"
