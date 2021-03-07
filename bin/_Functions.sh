@@ -351,11 +351,19 @@ gb_build() {
 			DOCKER_ARGS=""
 			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Pull ref container."
 			docker pull "${GB_REF}"
-			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Query ref container."
-			GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ with .ContainerConfig.Entrypoint}} {{ index . 0 }}{{ end }}' "${GB_REF}")"
-			export GEARBOX_ENTRYPOINT
-			GEARBOX_ENTRYPOINT_ARGS="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
-			export GEARBOX_ENTRYPOINT_ARGS
+			if [ "${GB_RUN}" == "" ]
+			then
+				p_info "${GB_IMAGENAME}:${GB_VERSION}" "Query ref container."
+				GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ with }}{{ else }}{{ with .ContainerConfig.Entrypoint}}{{ index . 0 }}{{ end }}' "${GB_REF}")"
+				export GEARBOX_ENTRYPOINT
+				GEARBOX_ENTRYPOINT_ARGS="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
+				export GEARBOX_ENTRYPOINT_ARGS
+			else
+				GEARBOX_ENTRYPOINT="${GB_RUN}"
+				export GEARBOX_ENTRYPOINT
+				GEARBOX_ENTRYPOINT_ARGS="${GB_ARGS}"
+				export GEARBOX_ENTRYPOINT_ARGS
+			fi
 		fi
 
 		p_info "${GB_IMAGENAME}:${GB_VERSION}" "Building container."
