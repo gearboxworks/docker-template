@@ -7,14 +7,14 @@
 ifdef TARGET_VERSION
 
 ################################################################################
-JSONCMD := ./bin/JsonToConfig -json $(TARGET_VERSION)/gearbox.json
-JSONTEST := $(shell $(JSONCMD) -template-string '{{ .Json.name }}')
+JSONCMD := ./bin/launch scribe $(TARGET_VERSION)/gearbox.json
+JSONTEST := $(shell $(JSONCMD) --template '{{ .Json.name }}')
 ifeq ($(JSONTEST),)
-$(error "# Gearbox: ERROR - No ./bin/JsonToConfig binary.")
+$(error "# Gearbox: ERROR - No ./bin/launch binary.")
 
 else
 define GetFromPkg
-$(shell ./bin/JsonToConfig -json $(TARGET_VERSION)/gearbox.json -template-string '$(1)')
+$(shell ./bin/launch scribe load $(TARGET_VERSION)/gearbox.json --template '$(1)')
 endef
 
 endif

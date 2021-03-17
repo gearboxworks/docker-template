@@ -20,7 +20,7 @@ mkdir "${DIR}"
 RSYNC="$(which rsync)"
 if [ "${RSYNC}" != "" ]
 then
-	rsync -HvaxP TEMPLATE/build/ "${DIR}/"
+	rsync -HvaxP TEMPLATE/build/ "${DIR}/" >/dev/null
 else
 	tar cf - -C TEMPLATE/build . | tar xvf - -C "${DIR}"
 fi
@@ -56,7 +56,7 @@ do
 	fi
 
 	echo "Gearbox: Processing ${OUTFILE}"
-	{{ .ExecName }} -json "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" -create "${OUTFILE}"
+	{{ .Exec.CmdName }} scribe convert "{{ .JsonFile.Dir }}/{{ .JsonFile.Name }}" "${OUTFILE}"
 done
 
 find ${DIR}/services -type f | xargs chmod 755

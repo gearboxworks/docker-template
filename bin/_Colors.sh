@@ -3,17 +3,17 @@
 TERM=xterm-256color
 export TERM
 
-GB_TERM_HB="{{ .Json.bold.on }}{{ .Json.fg.cyan }}Gearbox[{{ .Json.fg.white }}"
-GB_TERM_HE="{{ .Json.fg.cyan }}]: "
+GB_TERM_HB="{{ .Color.bold.on }}{{ .Color.fg.cyan }}Gearbox[{{ .Color.fg.white }}"
+GB_TERM_HE="{{ .Color.fg.cyan }}]: "
 
-GB_TERM_CMD="${GB_BINFILE} -json ${GB_BINDIR}/_Colors.json -template-string"
+GB_TERM_CMD="${GB_BINFILE} scribe load --template"
 
 p_echo() {
 	local _name=${1:-$0}; shift
 	local _fg=$1; shift
 	local _txt="$@"
 
-	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Json.fg.${_fg} }}${_txt}{{ .Json.reset }}\n"
+	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Color.fg.${_fg} }}${_txt}{{ .Color.reset }}";echo
 }
 
 p_n_echo() {
@@ -21,7 +21,7 @@ p_n_echo() {
 	local _fg=$1; shift
 	local _txt="$@"
 
-	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Json.fg.${_fg} }}${_txt}{{ .Json.reset }}"
+	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Color.fg.${_fg} }}${_txt}{{ .Color.reset }}"
 }
 
 bp_echo() {
@@ -30,7 +30,7 @@ bp_echo() {
 	local _fg=$1; shift
 	local _txt="$@"
 
-	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Json.bg.${_bg} }}{{ .Json.fg.${_fg} }}${_txt}{{ .Json.reset }}\n"
+	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Color.bg.${_bg} }}{{ .Color.fg.${_fg} }}${_txt}{{ .Color.reset }}";echo
 }
 
 bp_n_echo() {
@@ -39,7 +39,7 @@ bp_n_echo() {
 	local _fg=$1; shift
 	local _txt="$@"
 
-	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Json.bg.${_bg} }}{{ .Json.fg.${_fg} }}${_txt}{{ .Json.reset }}"
+	${GB_TERM_CMD} "${GB_TERM_HB}${_name}${GB_TERM_HE}{{ .Color.bg.${_bg} }}{{ .Color.fg.${_fg} }}${_txt}{{ .Color.reset }}"
 }
 
 
@@ -48,8 +48,8 @@ c_n_echo()  { p_n_echo "" $@; }
 bc_echo()   { bp_echo "" $@; }
 bc_n_echo() { bp_n_echo "" $@; }
 
-blinkon()  { ${GB_TERM_CMD} "{{ .Json.blink.slow }}"; }
-blinkoff() { ${GB_TERM_CMD} "{{ .Json.blink.off }}"; }
+blinkon()  { ${GB_TERM_CMD} "{{ .Color.blink.slow }}"; }
+blinkoff() { ${GB_TERM_CMD} "{{ .Color.blink.off }}"; }
 
 
 p_err()    { local _name="$1"; shift; blinkon; bp_echo "${_name}" red white $@; blinkoff; }
