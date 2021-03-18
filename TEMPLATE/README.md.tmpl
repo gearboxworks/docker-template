@@ -51,16 +51,16 @@ GitHub release(latest): [![last-release-date](https://img.shields.io/github/rele
 
 ## Supported versions and respective Dockerfiles
 {{- if (FindInMap .Json.build "base") }}
-| Base | Latest GitHub Version | Latest Docker Version | Docker Size | Docker Tags |
-|:----:|:---------------------:|:---------------------:|:-----------:|:-----------:|
+| Base | GitHub Version | Docker Version | Docker Size | Docker Tags |
+|:----:|:--------------:|:--------------:|:-----------:|:-----------:|
 {{- range $key, $value := .Json.versions }}
 {{- if ne $key "" }}
 | {{ $refMdUrl }} | [![{{ $.Json.meta.name }}](https://img.shields.io/badge/{{ $key }}-green.svg)]({{ $repoUrl }}/releases/) | [![Docker Version)](https://img.shields.io/docker/v/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/{{ $key }})](https://hub.docker.com/repository/docker/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}) | [![Docker Size](https://img.shields.io/docker/image-size/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/{{ $key }})](https://hub.docker.com/repository/docker/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/tags) | _([`{{ $key }}`{{ with $value.majorversion }}, `{{ . }}`{{ end }}{{ with $value.latest }}, `latest`{{ end }}]({{ $repoUrl }}/blob/master/versions/{{ $key }}/DockerfileRuntime))_ |
 {{- end }}
 {{- end }}
 {{- else }}
-| Service Website | Gear Name | Latest GitHub Version | Latest Docker Version | Docker Size | Docker Tags |
-|:---------------:|:---------:|:---------------------:|:---------------------:|:-----------:|:-----------:|
+| Service Website | Gear Name | GitHub Version | Docker Version | Docker Size | Docker Tags |
+|:---------------:|:---------:|:--------------:|:--------------:|:-----------:|:-----------:|
 {{- range $key, $value := .Json.versions }}
 {{- if ne $key "" }}
 | {{ $refMdUrl }} | {{ $repoMdUrl }} | [![{{ $.Json.meta.name }}](https://img.shields.io/badge/{{ $.Json.meta.name }}-{{ $key }}-green.svg)]({{ $repoUrl }}/releases/) | [![Docker Version](https://img.shields.io/docker/v/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/{{ $key }})](https://hub.docker.com/repository/docker/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}) | [![Docker Size](https://img.shields.io/docker/image-size/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/{{ $key }})](https://hub.docker.com/repository/docker/{{ $.Json.meta.organization }}/{{ $.Json.meta.name }}/tags) | _([`{{ $key }}`{{ with $value.majorversion }}, `{{ . }}`{{ end }}{{ with $value.latest }}, `latest`{{ end }}]({{ $repoUrl }}/blob/master/versions/{{ $key }}/DockerfileRuntime))_ |
