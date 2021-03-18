@@ -64,7 +64,7 @@ then
 	rm -rf docker-template.tgz docker-template/
 	echo "# Gearbox[docker-template]: Done."
 
-	${DIR}/launch scribe load gearbox.json ./TEMPLATE/README.md.tmpl --out README.md
+	${DIR}/launch scribe load gearbox.json ./TEMPLATE/README.md.tmpl --force --out README.md
 else
 	echo "# Gearbox[docker-template]: Cannot find docker-template repository."
 fi
