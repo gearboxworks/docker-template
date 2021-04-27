@@ -251,14 +251,8 @@ RUN /bin/sh /etc/gearbox/build/{{ .Json.meta.name }}.sh
 # 8. Expose ports.
 EXPOSE 22 9970 {{ range .Json.build.ports }}{{ . }} {{ end }}
 WORKDIR {{ if (FindInMap .Json.build "workdir") }}{{ coalesce .Json.build.workdir "/home/gearbox/projects" }}{{ else }}/home/gearbox/projects{{ end }}
-{{ with .Json.build.inner }}{{ . }}{{ end }}
 
 # 9. Run S6 init.
-{{- if .Env.GEARBOX_ENTRYPOINT }}
-{{- if ne .Env.GEARBOX_ENTRYPOINT "" }}
-# ENTRYPOINT ["{{ with .Env.GEARBOX_ENTRYPOINT }}{{ . }}{{ end }}", "{{ with .Env.GEARBOX_ENTRYPOINT_ARGS }}{{ . }}{{ end }}"]
-{{- end }}
-{{- end }}
 ENTRYPOINT []
 CMD ["/init"]
 

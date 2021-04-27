@@ -4,7 +4,7 @@
 {{- $repoMdUrl := printf "[%s](%s)" .Json.meta.name $repoUrl }}
 
 {{- $gearboxJsonUrl := printf "%s/blob/master/gearbox.json" $repoUrl }}
-{{- $repoMdUrl := printf "[gearbox.json](%s)" $gearboxJsonUrl }}
+{{- $jsonMdUrl := printf "[gearbox.json](%s)" $gearboxJsonUrl }}
 
 {{- $refUrl := $repoUrl }}
 {{- $refMdUrl := $repoMdUrl }}
@@ -238,7 +238,7 @@ Configured Gearbox networks:
 
 * * *
 ### {{ $Gearbox }} container command integration
-When a {{ $Gearbox }} container is installed - specified commands, (as defined by the {{ $repoMdUrl }} file), will be symlinked to the `./bin/launch` executable.
+When a {{ $Gearbox }} container is installed - specified commands, (as defined by the {{ $jsonMdUrl }} file), will be symlinked to the `./bin/launch` executable.
 
 This allows for seamless integration of a {{ $Gearbox }} container's commands with the host machine.
 
@@ -260,7 +260,7 @@ This allows for seamless integration of a {{ $Gearbox }} container's commands wi
 
 ### Available commands
 
-The **{{ .Json.meta.name }}** {{ $Gearbox }} container has no defined commands within the {{ $repoMdUrl }} file.
+The **{{ .Json.meta.name }}** {{ $Gearbox }} container has no defined commands within the {{ $jsonMdUrl }} file.
 
 {{- if eq (len $cmds) 0 }}
 {{- else }}

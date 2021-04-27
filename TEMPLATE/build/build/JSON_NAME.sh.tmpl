@@ -40,7 +40,10 @@ fi
 
 c_ok "Generate installed file list"
 c_ok "####################"
-apk info -v -R gearbox | sed 's/gearbox://' | xargs apk info -L | awk '/bin\//{print"/"$1}'
+if [ "${APKBIN}" != "" ]
+then
+	apk info -v -R gearbox | sed 's/gearbox://' | xargs apk info -L | awk '/bin\//{print"/"$1}'
+fi
 c_ok "####################"
 
 
