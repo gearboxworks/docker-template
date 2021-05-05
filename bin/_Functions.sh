@@ -14,13 +14,25 @@ case ${ARCH} in
 		;;
 esac
 
-GB_BINFILE="$(./bin/${ARCH}/launch scribe load --json '{}' --template '{{ .Exec.Cmd }}')"
-GB_ARCHDIR="$(./bin/${ARCH}/launch scribe load --json '{}' --template '{{ .Exec.CmdDir }}')"
-GB_BINDIR="$(dirname "$GB_ARCHDIR")"
-GB_BASEDIR="$(dirname "$GB_BINDIR")"
+
+# LAUNCHBIN="${GB_BINDIR}/${ARCH}/launch"
+LAUNCHBIN="$(which launch)"
+if [ "${LAUNCHBIN}" == "" ]
+then
+	echo "Cannot find launch binary - please download."
+	exit
+fi
+
+# GB_BINFILE="$(./bin/${ARCH}/launch scribe load --json '{}' --template '{{ .Exec.Cmd }}')"
+GB_BINFILE="$(${LAUNCHBIN} scribe load --json '{}' --template '{{ .Exec.Cmd }}')"
+# GB_ARCHDIR="$(./bin/${ARCH}/launch scribe load --json '{}' --template '{{ .Exec.CmdDir }}')"
+GB_ARCHDIR="$(${LAUNCHBIN} scribe load --json '{}' --template '{{ .Exec.Cmd }}')"
+# GB_BINDIR="$(dirname "$GB_ARCHDIR")"
+GB_BINDIR="bin/"
+# GB_BASEDIR="$(dirname "$GB_BINDIR")"
+GB_BASEDIR="."
 GB_JSONFILE="${GB_BASEDIR}/gearbox.json"
 
-LAUNCHBIN="${GB_BINDIR}/${ARCH}/launch"
 
 if [ -f "${GB_JSONFILE}" ]
 then
@@ -305,50 +317,53 @@ gb_build() {
 			mkdir -p "${GB_VERDIR}/logs"
 		fi
 
-		if [ "${GB_REF}" == "base" ]
-		then
-			DOCKER_ARGS="--squash"
-			p_info "${GB_IMAGENAME}:${GB_VERSION}" "This is a base container."
+#		if [ "${GB_REF}" == "base" ]
+#		then
+#			DOCKER_ARGS="--squash"
+#			p_info "${GB_IMAGENAME}:${GB_VERSION}" "This is a base container."
+#
+#		elif [ "${GB_REF}" != "" ]
+#		then
+#			DOCKER_ARGS=""
+#			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Pull ref container."
+#			docker pull "${GB_REF}"
+#			if [ "${GB_RUN}" == "" ]
+#			then
+#				p_info "${GB_IMAGENAME}:${GB_VERSION}" "Query ref container."
+#				GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ with }}{{ else }}{{ with .ContainerConfig.Entrypoint}}{{ index . 0 }}{{ end }}' "${GB_REF}")"
+#				export GEARBOX_ENTRYPOINT
+#				GEARBOX_ENTRYPOINT_ARGS="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
+#				export GEARBOX_ENTRYPOINT_ARGS
+#			else
+#				GEARBOX_ENTRYPOINT="${GB_RUN}"
+#				export GEARBOX_ENTRYPOINT
+#				GEARBOX_ENTRYPOINT_ARGS="${GB_ARGS}"
+#				export GEARBOX_ENTRYPOINT_ARGS
+#			fi
+#		fi
 
-		elif [ "${GB_REF}" != "" ]
-		then
-			DOCKER_ARGS=""
-			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Pull ref container."
-			docker pull "${GB_REF}"
-			if [ "${GB_RUN}" == "" ]
-			then
-				p_info "${GB_IMAGENAME}:${GB_VERSION}" "Query ref container."
-				GEARBOX_ENTRYPOINT="$(docker inspect --format '{{ with }}{{ else }}{{ with .ContainerConfig.Entrypoint}}{{ index . 0 }}{{ end }}' "${GB_REF}")"
-				export GEARBOX_ENTRYPOINT
-				GEARBOX_ENTRYPOINT_ARGS="$(docker inspect --format '{{ join .ContainerConfig.Entrypoint " " }}' "${GB_REF}")"
-				export GEARBOX_ENTRYPOINT_ARGS
-			else
-				GEARBOX_ENTRYPOINT="${GB_RUN}"
-				export GEARBOX_ENTRYPOINT
-				GEARBOX_ENTRYPOINT_ARGS="${GB_ARGS}"
-				export GEARBOX_ENTRYPOINT_ARGS
-			fi
-		fi
+		${LAUNCHBIN} build create "${GB_NAME}:${GB_VERSION}"
 
 		p_info "${GB_IMAGENAME}:${GB_VERSION}" "Building container."
 		if [ "${GITHUB_ACTIONS}" == "" ]
 		then
-			script ${LOG_ARGS} ${LOGFILE} \
-				docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS ${DOCKER_ARGS} .
+			script ${LOG_ARGS} ${LOGFILE} ${LAUNCHBIN} build create "${GB_NAME}:${GB_VERSION}"
+#				docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS ${DOCKER_ARGS} .
 			p_info "${GB_IMAGENAME}:${GB_VERSION}" "Log file saved to \"${LOGFILE}\""
 		else
-			docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS ${DOCKER_ARGS} .
+			${LAUNCHBIN} build create "${GB_NAME}:${GB_VERSION}"
+			# docker build -t ${GB_IMAGENAME}:${GB_VERSION} -f ${GB_DOCKERFILE} --build-arg GEARBOX_ENTRYPOINT --build-arg GEARBOX_ENTRYPOINT_ARGS ${DOCKER_ARGS} .
 		fi
 
-		if [ "${GB_MAJORVERSION}" != "" ]
-		then
-			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:${GB_MAJORVERSION}
-		fi
-
-		if [ "${GB_LATEST}" == "true" ]
-		then
-			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:latest
-		fi
+#		if [ "${GB_MAJORVERSION}" != "" ]
+#		then
+#			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:${GB_MAJORVERSION}
+#		fi
+#
+#		if [ "${GB_LATEST}" == "true" ]
+#		then
+#			docker tag ${GB_IMAGENAME}:${GB_VERSION} ${GB_IMAGENAME}:latest
+#		fi
 	done
 
 	return ${EXIT}
@@ -587,7 +602,7 @@ gb_release() {
 		sleep 2
 
 		# gb_test ${GB_VERSION}
-		${LAUNCHBIN} create test "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} build test "${GB_NAME}:${GB_VERSION}"
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then
@@ -684,7 +699,7 @@ gb_bash() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} build start "${GB_NAME}:${GB_VERSION}"
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then
@@ -718,7 +733,7 @@ gb_start() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} start "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} build start "${GB_NAME}:${GB_VERSION}"
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then
@@ -747,7 +762,7 @@ gb_stop() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} stop "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} build stop "${GB_NAME}:${GB_VERSION}"
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then
@@ -776,7 +791,7 @@ gb_test() {
 	do
 		gb_getenv ${GB_VERSION}
 
-		${LAUNCHBIN} create test "${GB_NAME}:${GB_VERSION}"
+		${LAUNCHBIN} build test "${GB_NAME}:${GB_VERSION}"
 		RETURN="$?"
 		if [ "${RETURN}" != "0" ]
 		then

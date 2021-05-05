@@ -7,7 +7,7 @@
 ifdef TARGET_VERSION
 
 ################################################################################
-JSONCMD := ./bin/launch scribe load $(TARGET_VERSION)/gearbox.json
+JSONCMD := launch scribe $(TARGET_VERSION)/gearbox.json
 JSONTEST := $(shell $(JSONCMD) --template '{{ .Json.name }}')
 ifeq ($(JSONTEST),)
 $(error "# Gearbox: ERROR - No ./bin/launch binary.")
