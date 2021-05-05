@@ -75,13 +75,13 @@ upload() {
 
 find_last_version() {
 	${DIR}/github-release info -u gearboxworks -r "${GB_GITREPO}" -j > /tmp/z
-	LAST_VERSION="$(${DIR}/launch scribe load --json /tmp/z --template '{{ with index .Json.Releases 0 }}{{ .tag_name }}{{ end }}')"
+	LAST_VERSION="$(launch scribe load --json /tmp/z --template '{{ with index .Json.Releases 0 }}{{ .tag_name }}{{ end }}')"
 }
 
 get_description() {
 	GET_VERSION="$1"; export GET_VERSION
 	${DIR}/github-release info -u gearboxworks -r "${GB_GITREPO}" -j > /tmp/z
-	LAST_DESCRIPTION="$(${DIR}/launch scribe load --json /tmp/z --template '{{ range $k,$v := .Json.Releases }}{{ if eq .tag_name $.Env.GET_VERSION }}{{ .body }}{{ end }}{{ end }}')"
+	LAST_DESCRIPTION="$(launch scribe load --json /tmp/z --template '{{ range $k,$v := .Json.Releases }}{{ if eq .tag_name $.Env.GET_VERSION }}{{ .body }}{{ end }}{{ end }}')"
 }
 
 
